@@ -79,6 +79,7 @@ class TechnicalIndicatorsResponse(BaseModel):
     symbol: str
     name: str
     current_values: IndicatorSummary
+    indicators: Optional[Dict[str, Any]] = None
     trend: str  # "Bullish", "Bearish", "Sideways"
     trend_reasons: List[str]
     explanations: Dict[str, str]

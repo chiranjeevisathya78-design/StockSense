@@ -18,23 +18,28 @@ export class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-[#08080a] text-white p-8 flex items-center justify-center">
-          <div className="max-w-2xl w-full p-8 rounded-[10px] bg-[#040406] border border-red-500/40 space-y-4">
-            <h1 className="text-xl font-bold text-red-400">Application Rendering Notice</h1>
-            <p className="text-xs text-slate-300">
-              An unexpected component error occurred while rendering the page:
+        <div className="min-h-screen bg-[#f7f7f5] text-[#111111] p-6 sm:p-8 flex items-center justify-center font-sans">
+          <div className="max-w-xl w-full p-8 rounded-2xl bg-white border border-[#e8e8e6] shadow-sm space-y-5 text-center">
+            <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-200/80 text-rose-600 flex items-center justify-center mx-auto text-xl font-bold">
+              !
+            </div>
+            <h1 className="text-2xl font-medium text-[#111111] tracking-tight">System Refresh Needed</h1>
+            <p className="text-sm text-[#7b7b7b] leading-relaxed max-w-md mx-auto">
+              A temporary rendering discrepancy was encountered. Click below to refresh your session with verified live feeds.
             </p>
-            <pre className="p-4 rounded bg-[#121317] border border-[#1c1d22] text-xs font-mono text-red-300 overflow-x-auto whitespace-pre-wrap">
-              {this.state.error?.toString()}
-            </pre>
+            {this.state.error && (
+              <pre className="p-3 rounded-xl bg-[#f7f7f5] border border-[#e8e8e6] text-xs font-mono text-rose-600 overflow-x-auto whitespace-pre-wrap text-left">
+                {this.state.error?.toString()}
+              </pre>
+            )}
             <button
               onClick={() => {
                 localStorage.clear();
                 window.location.href = '/dashboard';
               }}
-              className="px-5 py-2 rounded-full bg-white text-black text-xs font-semibold hover:bg-slate-200 transition"
+              className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-[#111111] text-white text-xs font-medium hover:bg-black transition-transform duration-200 hover:-translate-y-px shadow-xs cursor-pointer"
             >
-              Reset Cache & Launch Dashboard
+              Reset Session & Launch Dashboard
             </button>
           </div>
         </div>

@@ -214,23 +214,27 @@ export const stockApi = {
       daily_return: 0.45,
     }));
 
+    const summaryValues = {
+      current_price: p,
+      sma_20: Math.round(p * 0.988 * 100) / 100,
+      sma_50: Math.round(p * 0.972 * 100) / 100,
+      ema_20: Math.round(p * 0.991 * 100) / 100,
+      rsi: 61.4,
+      rsi_14: 61.4,
+      macd: 4.82,
+      macd_signal: 3.95,
+      macd_hist: 0.87,
+      bb_upper: Math.round(p * 1.035 * 100) / 100,
+      bb_middle: Math.round(p * 0.99 * 100) / 100,
+      bb_lower: Math.round(p * 0.945 * 100) / 100,
+      daily_return: 1.15,
+    };
+
     return {
       symbol,
       name: prof.name,
-      current_values: {
-        current_price: p,
-        sma_20: Math.round(p * 0.988 * 100) / 100,
-        sma_50: Math.round(p * 0.972 * 100) / 100,
-        ema_20: Math.round(p * 0.991 * 100) / 100,
-        rsi_14: 61.4,
-        macd: 4.82,
-        macd_signal: 3.95,
-        macd_hist: 0.87,
-        bb_upper: Math.round(p * 1.035 * 100) / 100,
-        bb_middle: Math.round(p * 0.99 * 100) / 100,
-        bb_lower: Math.round(p * 0.945 * 100) / 100,
-        daily_return: 1.15,
-      },
+      current_values: summaryValues,
+      indicators: summaryValues,
       trend: 'Bullish',
       trend_reasons: [
         `Price (${p}) trades comfortably above the 20-day SMA, confirming short-term buyer accumulation.`,

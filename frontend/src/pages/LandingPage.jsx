@@ -418,7 +418,7 @@ export default function LandingPage() {
   const [activePreviewSymbol, setActivePreviewSymbol] = useState('RELIANCE.NS');
   const [openFaq, setOpenFaq] = useState(0);
 
-  const activeAsset = PREVIEW_ASSETS[activePreviewSymbol];
+  const activeAsset = PREVIEW_ASSETS[activePreviewSymbol] || PREVIEW_ASSETS['RELIANCE.NS'];
 
   const handleOpenLogin = () => {
     setAuthModalMode('login');
@@ -651,19 +651,19 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
               <div className="p-4 rounded-xl bg-[#fafaf8] border border-[#e8e8e6] space-y-1">
                 <div className="text-[10px] font-medium text-[#9a9a9a] uppercase tracking-wider">Wilder RSI Momentum</div>
-                <div className="text-xl font-medium text-[#111]">{activeAsset.rsi}</div>
-                <div className="text-xs text-[#7b7b7b]">{activeAsset.rsiStatus}</div>
+                <div className="text-xl font-medium text-[#111]">{activeAsset?.rsi || '59.7'}</div>
+                <div className="text-xs text-[#7b7b7b]">{activeAsset?.rsiStatus || 'Bullish Momentum'}</div>
               </div>
 
               <div className="p-4 rounded-xl bg-[#fafaf8] border border-[#e8e8e6] space-y-1">
                 <div className="text-[10px] font-medium text-[#9a9a9a] uppercase tracking-wider">Moving Average Regime</div>
                 <div className="text-xl font-medium text-[#111]">Aligned</div>
-                <div className="text-xs text-[#7b7b7b]">{activeAsset.trend}</div>
+                <div className="text-xs text-[#7b7b7b]">{activeAsset?.trend || 'Above 20-Day & 50-Day SMAs'}</div>
               </div>
 
               <div className="p-4 rounded-xl bg-[#fafaf8] border border-[#e8e8e6] space-y-1">
                 <div className="text-[10px] font-medium text-emerald-700 uppercase tracking-wider">T+1 Target Projection</div>
-                <div className="text-xl font-medium text-emerald-600">{activeAsset.target}</div>
+                <div className="text-xl font-medium text-emerald-600">{activeAsset?.target || '₹1,328.45'}</div>
                 <div className="text-xs text-[#7b7b7b]">Zero future-data lookahead</div>
               </div>
             </div>
