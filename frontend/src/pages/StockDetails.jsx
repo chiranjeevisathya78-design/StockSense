@@ -64,7 +64,7 @@ export default function StockDetails() {
 
   if (loading) {
     return (
-      <div className="p-6 space-y-6 max-w-[1216px] mx-auto">
+      <div className="p-6 space-y-6 max-w-6xl mx-auto">
         <LoadingSkeleton type="card" count={4} />
         <LoadingSkeleton type="chart" />
         <LoadingSkeleton type="table" count={5} />
@@ -74,10 +74,10 @@ export default function StockDetails() {
 
   if (error || !quote) {
     return (
-      <div className="p-6 max-w-[1216px] mx-auto">
+      <div className="p-6 max-w-6xl mx-auto">
         <button
           onClick={() => navigate('/explore')}
-          className="flex items-center gap-2 text-xs text-slash-copper hover:underline mb-4"
+          className="flex items-center gap-2 text-xs text-[#111] hover:underline mb-4 font-medium"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Explore
         </button>
@@ -90,35 +90,29 @@ export default function StockDetails() {
   const inWatchlist = isInWatchlist(quote.symbol);
 
   return (
-    <div className="p-4 lg:p-8 space-y-10 max-w-[1216px] mx-auto">
+    <div className="p-4 lg:p-8 space-y-8 max-w-6xl mx-auto bg-[#f7f7f5] text-[#7b7b7b] font-sans">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slash-graphite">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#e8e8e6]">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="font-serif text-4xl lg:text-5xl font-normal text-white tracking-[0.01em]">
+            <h1 className="text-3xl sm:text-4xl font-medium text-[#111] tracking-[-0.03em]">
               {quote.symbol}
             </h1>
-            <span
-              className={`text-xs font-medium px-2.5 py-0.5 rounded-full border ${
-                quote.market === 'IN'
-                  ? 'border-slash-copper/40 text-slash-copper bg-slash-copperGlow'
-                  : 'border-slash-steel text-slash-silver bg-slash-carbon'
-              }`}
-            >
+            <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-[#f0f0ee] text-[#4b5563]">
               {quote.market === 'IN' ? 'NSE/BSE (India)' : 'US Equities'}
             </span>
           </div>
-          <p className="text-sm text-slash-fog mt-1">{quote.name}</p>
+          <p className="text-sm text-[#7b7b7b] mt-1">{quote.name}</p>
         </div>
 
         {/* Feature Action Buttons */}
         <div className="flex flex-wrap items-center gap-2.5">
           <button
             onClick={() => toggleWatchlist(quote.symbol)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium border transition ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium border transition cursor-pointer ${
               inWatchlist
-                ? 'bg-slash-carbon text-slash-copper border-slash-copper/40'
-                : 'bg-transparent text-white border-slash-steel hover:border-white'
+                ? 'bg-[#111] text-white border-[#111]'
+                : 'bg-white text-[#111] border-[#e8e8e6] hover:bg-[#f0f0ee]'
             }`}
           >
             <Bookmark className="w-3.5 h-3.5 fill-current" />
@@ -127,15 +121,15 @@ export default function StockDetails() {
 
           <Link
             to={`/technical/${encodeURIComponent(quote.symbol)}`}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-slash-onyx hover:bg-slash-carbon border border-slash-graphite text-xs font-medium text-white transition"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-[#f0f0ee] border border-[#e8e8e6] text-xs font-medium text-[#111] transition shadow-xs"
           >
-            <Sliders className="w-3.5 h-3.5 text-slash-fog" />
+            <Sliders className="w-3.5 h-3.5 text-[#7b7b7b]" />
             <span>Technicals</span>
           </Link>
 
           <Link
             to={`/predictions/${encodeURIComponent(quote.symbol)}`}
-            className="flex items-center gap-1.5 px-5 py-2 rounded-full bg-white text-black hover:bg-slate-200 text-xs font-medium transition"
+            className="flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#111] text-white hover:bg-black text-xs font-medium transition shadow-xs"
           >
             <Cpu className="w-3.5 h-3.5" />
             <span>AI Prediction</span>
@@ -143,9 +137,9 @@ export default function StockDetails() {
 
           <Link
             to={`/insights/${encodeURIComponent(quote.symbol)}`}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-slash-onyx hover:bg-slash-carbon border border-slash-graphite text-xs font-medium text-white transition"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-[#f0f0ee] border border-[#e8e8e6] text-xs font-medium text-[#111] transition shadow-xs"
           >
-            <Sparkles className="w-3.5 h-3.5 text-slash-copper" />
+            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
             <span>Insights</span>
           </Link>
         </div>
@@ -155,194 +149,160 @@ export default function StockDetails() {
 
       {/* Primary Settlement Price Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-5 col-span-2 sm:col-span-1 lg:col-span-2 flex flex-col justify-between">
-          <div className="text-[12px] text-slash-ash uppercase tracking-wider font-medium">Last Settlement Close</div>
+        <div className="rounded-2xl bg-white border border-[#e8e8e6] p-5 col-span-2 sm:col-span-1 lg:col-span-2 flex flex-col justify-between shadow-xs">
+          <div className="text-xs text-[#9a9a9a] uppercase tracking-wider font-medium">Last Settlement Close</div>
           <div className="flex items-baseline gap-3 my-1">
-            <span className="font-serif text-3xl lg:text-4xl font-normal text-white tracking-[0.01em]">
+            <span className="text-3xl font-semibold text-[#111]">
               {formatCurrency(quote.price, quote.currency)}
             </span>
             <div
-              className={`flex items-center gap-1 font-mono text-xs font-medium px-2 py-0.5 rounded-full border ${
+              className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
                 isPositive
-                  ? 'text-slash-sage bg-slash-sageBg border-slash-sage/30'
-                  : 'text-slash-rose bg-slash-roseBg border-slash-rose/30'
+                  ? 'text-emerald-700 bg-emerald-50 border border-emerald-200/60'
+                  : 'text-rose-700 bg-rose-50 border border-rose-200/60'
               }`}
             >
-              {isPositive ? (
-                <TrendingUp className="w-3 h-3" />
-              ) : (
-                <TrendingDown className="w-3 h-3" />
-              )}
+              {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
               <span>{formatPercent(quote.percent_change)}</span>
             </div>
           </div>
-          <div className="text-[11px] text-slash-fog">
-            Session date: {quote.timestamp}
+          <div className="text-xs text-[#9a9a9a]">
+            {isPositive ? '+' : ''}{formatCurrency(quote.change, quote.currency)} Today
           </div>
         </div>
 
-        <div className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-4">
-          <div className="text-[11px] text-slash-ash uppercase tracking-wider">Open</div>
-          <div className="font-serif text-lg font-normal text-white mt-1">
-            {formatCurrency(quote.open, quote.currency)}
-          </div>
-        </div>
-
-        <div className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-4">
-          <div className="text-[11px] text-slash-ash uppercase tracking-wider">Day High</div>
-          <div className="font-serif text-lg font-normal text-slash-sage mt-1">
+        <div className="rounded-2xl bg-white border border-[#e8e8e6] p-4 flex flex-col justify-between shadow-xs">
+          <span className="text-xs text-[#9a9a9a] uppercase tracking-wider font-medium">Day High</span>
+          <span className="text-lg font-semibold text-[#111]">
             {formatCurrency(quote.high, quote.currency)}
-          </div>
+          </span>
+          <span className="text-[11px] text-[#9a9a9a]">Peak transaction</span>
         </div>
 
-        <div className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-4">
-          <div className="text-[11px] text-slash-ash uppercase tracking-wider">Day Low</div>
-          <div className="font-serif text-lg font-normal text-slash-rose mt-1">
+        <div className="rounded-2xl bg-white border border-[#e8e8e6] p-4 flex flex-col justify-between shadow-xs">
+          <span className="text-xs text-[#9a9a9a] uppercase tracking-wider font-medium">Day Low</span>
+          <span className="text-lg font-semibold text-[#111]">
             {formatCurrency(quote.low, quote.currency)}
-          </div>
+          </span>
+          <span className="text-[11px] text-[#9a9a9a]">Base transaction</span>
         </div>
 
-        <div className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-4">
-          <div className="text-[11px] text-slash-ash uppercase tracking-wider">Volume</div>
-          <div className="font-mono text-base font-medium text-white mt-1">
+        <div className="rounded-2xl bg-white border border-[#e8e8e6] p-4 flex flex-col justify-between shadow-xs">
+          <span className="text-xs text-[#9a9a9a] uppercase tracking-wider font-medium">Open</span>
+          <span className="text-lg font-semibold text-[#111]">
+            {formatCurrency(quote.open, quote.currency)}
+          </span>
+          <span className="text-[11px] text-[#9a9a9a]">Market open</span>
+        </div>
+
+        <div className="rounded-2xl bg-white border border-[#e8e8e6] p-4 flex flex-col justify-between shadow-xs">
+          <span className="text-xs text-[#9a9a9a] uppercase tracking-wider font-medium">Volume</span>
+          <span className="text-lg font-semibold text-[#111]">
             {formatVolume(quote.volume)}
-          </div>
+          </span>
+          <span className="text-[11px] text-[#9a9a9a]">Contracts traded</span>
         </div>
       </div>
 
-      {/* Historical Gilded Chart with Interval Pills */}
-      <div className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-6 lg:p-8 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Main Interactive Settlement Chart Card */}
+      <div className="rounded-2xl bg-white border border-[#e8e8e6] p-6 sm:p-8 shadow-xs space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[#e8e8e6]">
           <div>
-            <div className="text-[13px] font-semibold text-slash-copper uppercase tracking-[-0.02em]">Historical Price Action</div>
-            <h2 className="font-serif text-2xl font-normal text-white tracking-[0.01em] mt-0.5">
-              Settlement Levels & Volatility
-            </h2>
+            <h3 className="text-xl font-medium text-[#111]">
+              Continuous Settlement Trajectory
+            </h3>
+            <p className="text-xs text-[#7b7b7b] mt-0.5">
+              Historical adjusted daily close values across chosen timeframe
+            </p>
           </div>
 
-          {/* Date Range Interval Buttons */}
-          <div className="flex items-center gap-1.5 p-1 rounded-full bg-slash-carbon border border-slash-graphite">
-            {[
-              { id: '1mo', label: '1M' },
-              { id: '3mo', label: '3M' },
-              { id: '6mo', label: '6M' },
-              { id: '1y', label: '1Y' },
-              { id: '5y', label: '5Y' },
-            ].map((rng) => (
+          {/* Timeframe Period Switcher */}
+          <div className="flex items-center gap-1.5 p-1 rounded-full bg-[#f7f7f5] border border-[#e8e8e6]">
+            {['1mo', '3mo', '6mo', '1y', '5y'].map((p) => (
               <button
-                key={rng.id}
-                onClick={() => setPeriod(rng.id)}
-                className={`px-3 py-1 rounded-full text-xs font-mono transition ${
-                  period === rng.id
-                    ? 'bg-white text-black font-semibold'
-                    : 'text-slash-fog hover:text-white'
+                key={p}
+                onClick={() => setPeriod(p)}
+                className={`px-3 py-1 rounded-full text-xs transition cursor-pointer ${
+                  period === p
+                    ? 'bg-[#111] text-white font-medium shadow-xs'
+                    : 'text-[#4b5563] hover:text-[#111] hover:bg-[#e8e8e6]'
                 }`}
               >
-                {rng.label}
+                {p.toUpperCase()}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Recharts Area Chart */}
-        <div className="h-80 w-full pt-2">
-          <ResponsiveContainer width="100%" height="100%">
+        {/* Recharts Area with Clean Cyan Line */}
+        <div className="w-full pt-2" style={{ height: 320, minHeight: 320 }}>
+          <ResponsiveContainer width="100%" height={320}>
             <AreaChart data={history}>
               <defs>
-                <linearGradient id="detailGilded" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ae9357" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="#ae9357" stopOpacity={0.0} />
+                <linearGradient id="kindredDetailsGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#00b3dd" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#00b3dd" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1c1d22" vertical={false} />
-              <XAxis
-                dataKey="date"
-                stroke="#5e616e"
-                tick={{ fontSize: 11 }}
-                tickFormatter={(val) => val.slice(5)}
-              />
-              <YAxis
-                stroke="#5e616e"
-                tick={{ fontSize: 11 }}
-                domain={['auto', 'auto']}
-                tickFormatter={(val) => `${quote.currency === 'INR' ? '₹' : '$'}${val}`}
-              />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0ee" vertical={false} />
+              <XAxis dataKey="date" stroke="#9a9a9a" tick={{ fontSize: 11, fill: '#7b7b7b' }} />
+              <YAxis stroke="#9a9a9a" domain={['auto', 'auto']} tick={{ fontSize: 11, fill: '#7b7b7b' }} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#040406',
-                  borderColor: '#2e3038',
-                  borderRadius: '10px',
-                  color: '#fff',
+                  backgroundColor: '#ffffff',
+                  borderColor: '#e8e8e6',
+                  borderRadius: '12px',
+                  color: '#111111',
                   fontSize: '12px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
                 }}
-                formatter={(val) => [formatCurrency(val, quote.currency), 'Close Price']}
               />
               <Area
                 type="monotone"
                 dataKey="close"
-                stroke="#ae9357"
+                name="Settlement Price"
+                stroke="#00b3dd"
                 strokeWidth={2}
                 fillOpacity={1}
-                fill="url(#detailGilded)"
+                fill="url(#kindredDetailsGrad)"
               />
             </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      {/* Historical Data Table */}
-      <div className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-6 space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-slash-graphite">
-          <h2 className="font-serif text-xl font-normal text-white">Historical OHLCV Records</h2>
-          <span className="text-xs font-mono text-slash-ash">
-            Latest {Math.min(20, history.length)} trading sessions
-          </span>
+      {/* Historical Trading Ledger Table */}
+      <div className="rounded-2xl bg-white border border-[#e8e8e6] overflow-hidden shadow-xs">
+        <div className="px-6 py-4 bg-[#fafaf8] border-b border-[#e8e8e6] flex items-center justify-between">
+          <h4 className="text-sm font-medium text-[#111]">
+            Recent Daily Trading Ledger
+          </h4>
+          <span className="text-xs text-[#9a9a9a]">OHLCV Historical Logs</span>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-mono">
-            <thead className="text-slash-fog uppercase border-b border-slash-graphite">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-[#f7f7f5] text-xs uppercase font-medium text-[#9a9a9a] border-b border-[#e8e8e6]">
               <tr>
-                <th className="py-3 px-3">Date</th>
-                <th className="py-3 px-3 text-right">Open</th>
-                <th className="py-3 px-3 text-right">High</th>
-                <th className="py-3 px-3 text-right">Low</th>
-                <th className="py-3 px-3 text-right">Close</th>
-                <th className="py-3 px-3 text-right">Volume</th>
+                <th className="px-6 py-3">Trading Date</th>
+                <th className="px-6 py-3 text-right">Open</th>
+                <th className="px-6 py-3 text-right">High</th>
+                <th className="px-6 py-3 text-right">Low</th>
+                <th className="px-6 py-3 text-right">Close</th>
+                <th className="px-6 py-3 text-right">Volume</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slash-graphite/40">
-              {history
-                .slice()
-                .reverse()
-                .slice(0, 20)
-                .map((row, idx) => {
-                  const isDayPositive = row.close >= row.open;
-                  return (
-                    <tr key={idx} className="hover:bg-slash-carbon transition">
-                      <td className="py-2.5 px-3 text-white font-medium">{row.date}</td>
-                      <td className="py-2.5 px-3 text-right text-slash-fog">
-                        {formatCurrency(row.open, quote.currency)}
-                      </td>
-                      <td className="py-2.5 px-3 text-right text-slash-sage">
-                        {formatCurrency(row.high, quote.currency)}
-                      </td>
-                      <td className="py-2.5 px-3 text-right text-slash-rose">
-                        {formatCurrency(row.low, quote.currency)}
-                      </td>
-                      <td
-                        className={`py-2.5 px-3 text-right font-medium ${
-                          isDayPositive ? 'text-slash-sage' : 'text-slash-rose'
-                        }`}
-                      >
-                        {formatCurrency(row.close, quote.currency)}
-                      </td>
-                      <td className="py-2.5 px-3 text-right text-slash-fog">
-                        {formatVolume(row.volume)}
-                      </td>
-                    </tr>
-                  );
-                })}
+            <tbody className="divide-y divide-[#e8e8e6]">
+              {history.slice(-10).reverse().map((row, idx) => (
+                <tr key={idx} className="hover:bg-[#fafaf8] transition">
+                  <td className="px-6 py-3 text-xs text-[#111] font-medium">{row.date}</td>
+                  <td className="px-6 py-3 text-xs text-right text-[#4b5563]">{formatCurrency(row.open, quote.currency)}</td>
+                  <td className="px-6 py-3 text-xs text-right text-[#4b5563]">{formatCurrency(row.high, quote.currency)}</td>
+                  <td className="px-6 py-3 text-xs text-right text-[#4b5563]">{formatCurrency(row.low, quote.currency)}</td>
+                  <td className="px-6 py-3 text-xs text-right font-medium text-[#111]">{formatCurrency(row.close, quote.currency)}</td>
+                  <td className="px-6 py-3 text-xs text-right text-[#7b7b7b]">{formatVolume(row.volume)}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

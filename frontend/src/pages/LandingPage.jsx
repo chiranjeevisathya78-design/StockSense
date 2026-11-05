@@ -1,71 +1,424 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
-  TrendingUp,
-  TrendingDown,
   ArrowRight,
-  ShieldCheck,
+  TrendingUp,
+  Activity,
   Cpu,
   Sliders,
   Sparkles,
-  Database,
-  Layers,
-  Award,
+  BarChart3,
+  ShieldCheck,
+  Zap,
   Globe,
+  Layers,
   CheckCircle2,
-  ChevronRight,
+  ChevronDown,
+  ArrowUpRight,
+  Database,
   Lock,
-  ChevronDown
 } from 'lucide-react';
-import { useStock } from '../context/StockContext';
 import {
-  ResponsiveContainer,
   AreaChart,
   Area,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  CartesianGrid
+  CartesianGrid,
 } from 'recharts';
+import { useStock } from '../context/StockContext';
+import StockLogo from '../components/StockLogo';
 
-// Simulated preview sparkline data for hero
-const HERO_CHART_DATA = [
-  { day: 'Day 1', price: 341.2 },
-  { day: 'Day 5', price: 343.8 },
-  { day: 'Day 10', price: 340.5 },
-  { day: 'Day 15', price: 346.1 },
-  { day: 'Day 20', price: 348.9 },
-  { day: 'Day 25', price: 345.4 },
-  { day: 'Day 30', price: 350.2 },
-  { day: 'Day 35', price: 352.5 },
-  { day: 'Day 40', price: 355.8 },
-  { day: 'Day 45 (Tomorrow)', price: 359.1 }, // Forecast point
+/* ───── Kindred Dot-Matrix Hands Halftone Canvas Engine ───── */
+const LOOP = 20;
+const DOT_CLR = '#0d0d0d';
+const LEVELS = [0, .26, .52, .78, 1];
+const SHEET_URL = 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261030_025250_100df7b8-31fd-4614-aa4a-c1b7d5b6b273.png&w=1600&q=85';
+
+const SRC = {
+  LA: [0, .06, .47, .40],
+  RA: [.53, .06, .47, .40],
+  LB: [0, .55, .47, .40],
+  RB: [.53, .55, .47, .40]
+};
+
+function hash(a, b) {
+  return ((Math.sin(a * 127.1 + b * 311.7) * 43758.5453) % 1 + 1) % 1;
+}
+function smooth(e0, e1, x) {
+  const t = Math.max(0, Math.min(1, (x - e0) / (e1 - e0)));
+  return t * t * (3 - 2 * t);
+}
+function mixAt(t, on, off, dur) {
+  return smooth(on, on + dur, t) * (1 - smooth(off, off + dur, t));
+}
+
+function DotMatrixCanvas() {
+  const canvasRef = useRef(null);
+  const stateRef = useRef({
+    sheetReady: false,
+    tiles: {},
+    W: 0, H: 0, DPR: 1,
+    step: 7, rowStep: 14, cols: 0, rows: 0, R: 3,
+    seeds: null,
+    fA: null, fACtx: null, fB: null, fBCtx: null,
+    t0: null, rafId: null,
+  });
+
+  const buildTiles = useCallback((sheet) => {
+    const s = stateRef.current;
+    const sw = sheet.naturalWidth;
+    const sh = sheet.naturalHeight;
+    const TILE_W = 420;
+    for (const key in SRC) {
+      const [fx, fy, fw, fh] = SRC[key];
+      const sx = fx * sw, sy = fy * sh, sW = fw * sw, sH = fh * sh;
+      const aspect = sH / sW;
+      const tw = TILE_W, th = Math.round(tw * aspect);
+      const c = document.createElement('canvas');
+      c.width = tw; c.height = th;
+      const x = c.getContext('2d');
+      x.imageSmoothingEnabled = true;
+      x.imageSmoothingQuality = 'high';
+      x.drawImage(sheet, sx, sy, sW, sH, 0, 0, tw, th);
+      s.tiles[key] = c;
+    }
+    s.sheetReady = true;
+  }, []);
+
+  const resize = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const s = stateRef.current;
+    s.W = canvas.clientWidth;
+    s.H = canvas.clientHeight;
+    s.DPR = Math.min(2, devicePixelRatio || 1);
+    canvas.width = s.W * s.DPR;
+    canvas.height = s.H * s.DPR;
+    s.step = Math.max(5, s.W / 205);
+    s.rowStep = s.step * 2.05;
+    s.cols = Math.ceil(s.W / s.step);
+    s.rows = Math.ceil(s.H / s.rowStep);
+    s.R = s.step * .46;
+
+    s.seeds = new Float32Array(s.cols * s.rows);
+    for (let j = 0; j < s.rows; j++) {
+      for (let i = 0; i < s.cols; i++) {
+        s.seeds[j * s.cols + i] = .55 * hash(i, j) + .45 * hash(j * 3.1, 7.7);
+      }
+    }
+    s.fA = document.createElement('canvas');
+    s.fA.width = s.cols; s.fA.height = s.rows;
+    s.fACtx = s.fA.getContext('2d', { willReadFrequently: true });
+    s.fB = document.createElement('canvas');
+    s.fB.width = s.cols; s.fB.height = s.rows;
+    s.fBCtx = s.fB.getContext('2d', { willReadFrequently: true });
+  }, []);
+
+  const drawHandToField = useCallback((fieldCtx, tile, isLeft, t, ph) => {
+    const s = stateRef.current;
+    const a = 2 * Math.PI * t / LOOP;
+    const portrait = s.H > s.W;
+    const hw = portrait ? s.W * .66 : s.W * .53;
+    const hAspect = (.40 * 1520) / (.47 * 2688);
+    const hh = hw * hAspect;
+    const cy = portrait ? s.H * .66 : s.H * .54;
+    const reach = (.035 * Math.sin(a + ph) + .012 * Math.sin(2 * a + 1.3 + ph)) * s.W;
+    const sc = 1 + .07 * Math.sin(a + .9 + ph);
+    const rot = (isLeft ? 1 : -1) * .045 * Math.sin(a + 2.1 + ph);
+    let x = isLeft ? reach - s.W * .045 : s.W - hw + s.W * .045 - reach;
+    const pivotX = isLeft ? 0 : hw;
+    const pivotY = hh / 2;
+    const sx = s.cols / s.W;
+    const sy = s.rows / s.H;
+    fieldCtx.save();
+    fieldCtx.scale(sx, sy);
+    fieldCtx.translate(x + pivotX, cy - hh / 2 + pivotY);
+    fieldCtx.rotate(rot);
+    fieldCtx.scale(sc, sc);
+    fieldCtx.translate(-pivotX, -pivotY);
+    fieldCtx.drawImage(tile, 0, 0, hw, hh);
+    fieldCtx.restore();
+  }, []);
+
+  const render = useCallback((rawT) => {
+    const s = stateRef.current;
+    if (!s.sheetReady) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const t = ((rawT % LOOP) + LOOP) % LOOP;
+
+    s.fACtx.fillStyle = '#ffffff';
+    s.fACtx.fillRect(0, 0, s.cols, s.rows);
+    s.fBCtx.fillStyle = '#ffffff';
+    s.fBCtx.fillRect(0, 0, s.cols, s.rows);
+
+    drawHandToField(s.fACtx, s.tiles.LA, true, t, 0);
+    drawHandToField(s.fACtx, s.tiles.RA, false, t, Math.PI);
+    drawHandToField(s.fBCtx, s.tiles.LB, true, t, 0);
+    drawHandToField(s.fBCtx, s.tiles.RB, false, t, Math.PI);
+
+    const dataA = s.fACtx.getImageData(0, 0, s.cols, s.rows).data;
+    const dataB = s.fBCtx.getImageData(0, 0, s.cols, s.rows).data;
+
+    const mL = mixAt(t, 6.2, 14.6, 1.6);
+    const mR = mixAt(t, 2.4, 10.4, 1.6);
+    const halfCols = s.cols / 2;
+    const tick = Math.floor(t * 7);
+    const portrait = s.H > s.W;
+
+    /* EXPANDED QUIET ZONE TO ENSURE FULL TEXT VISIBILITY */
+    const quietW = portrait ? 0.52 : 0.35;
+    const quietCY = portrait ? 0.34 : 0.35;
+    const quietH = 0.19;
+
+    ctx.setTransform(s.DPR, 0, 0, s.DPR, 0, 0);
+    ctx.clearRect(0, 0, s.W, s.H);
+    ctx.fillStyle = DOT_CLR;
+
+    for (let j = 0; j < s.rows; j++) {
+      let rowShift = 0;
+      if (hash(j, tick) > .965) {
+        rowShift = Math.round((hash(tick, j) - .5) * 8);
+      }
+      for (let i = 0; i < s.cols; i++) {
+        const idx = j * s.cols + i;
+        const seed = s.seeds[idx];
+        const m = i < halfCols ? mL : mR;
+        const useB = seed < m;
+        const si = Math.max(0, Math.min(s.cols - 1, i - rowShift));
+        const pxIdx = (j * s.cols + si) * 4;
+        const data = useB ? dataB : dataA;
+        const lum = data[pxIdx] / 255;
+        let v = Math.max(0, Math.min(1, (1 - lum - .16) / .42));
+
+        if (m > 0.001 && m < 0.999) {
+          const dist = Math.abs(seed - m);
+          if (dist < .12) {
+            v *= dist / .12;
+            if (hash(i + tick, j) <= .4) v *= .3;
+          }
+        }
+        v *= .86 + .14 * Math.sin(t * 3.2 + seed * 40);
+
+        /* Center horizontal fingertip gap */
+        const cx = Math.abs((i + .5) / s.cols - .5);
+        v *= smooth(.035, .12, cx);
+
+        /* Complete text quiet zone: ZERO dots behind headline, subline, and CTA */
+        const cyNorm = (j + .5) * s.rowStep / s.H;
+        const boxHalfW = portrait ? 0.48 : 0.34;
+        const boxHalfH = 0.24;
+        const boxCY = portrait ? 0.36 : 0.37;
+
+        const dx = cx / boxHalfW;
+        const dy = Math.abs(cyNorm - boxCY) / boxHalfH;
+        if (dx < 1.0 && dy < 1.0) {
+          const dBox = Math.max(dx, dy);
+          if (dBox < 0.85) {
+            v = 0; // Pure clean zone — zero dots overlapping text
+          } else {
+            v *= smooth(0.85, 1.0, dBox);
+          }
+        }
+
+        if (v < .01) continue;
+
+        let level = 0;
+        for (let k = LEVELS.length - 1; k >= 1; k--) {
+          if (v >= LEVELS[k] - .13) { level = LEVELS[k]; break; }
+        }
+        if (level === 0) continue;
+        const r = level <= .26 ? s.R * .38 : s.R * level;
+        const dotX = (i + .5) * s.step;
+        const dotY = (j + .5) * s.rowStep;
+        ctx.beginPath();
+        ctx.arc(dotX, dotY, r, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+    }
+  }, [drawHandToField]);
+
+  useEffect(() => {
+    resize();
+    const sheet = new Image();
+    sheet.crossOrigin = 'anonymous';
+    sheet.onload = () => {
+      buildTiles(sheet);
+      const s = stateRef.current;
+      function frame(now) {
+        if (s.t0 === null) s.t0 = now;
+        render((now - s.t0) / 1000);
+        s.rafId = requestAnimationFrame(frame);
+      }
+      s.rafId = requestAnimationFrame(frame);
+    };
+    sheet.src = SHEET_URL;
+
+    const onResize = () => resize();
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      if (stateRef.current.rafId) cancelAnimationFrame(stateRef.current.rafId);
+    };
+  }, [resize, buildTiles, render]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full block"
+      style={{ pointerEvents: 'none' }}
+    />
+  );
+}
+
+/* ───── Ticker Tape Data with Colors ───── */
+const TICKER_TAPE = [
+  { symbol: 'RELIANCE.NS', name: 'Reliance Ind.', price: '₹1,311.00', change: '+1.33%', up: true },
+  { symbol: 'TCS.NS', name: 'Tata Consultancy', price: '₹3,940.20', change: '+0.85%', up: true },
+  { symbol: 'HDFCBANK.NS', name: 'HDFC Bank', price: '₹1,745.50', change: '-0.42%', up: false },
+  { symbol: 'INFY.NS', name: 'Infosys Ltd', price: '₹1,882.10', change: '+2.14%', up: true },
+  { symbol: 'AAPL', name: 'Apple Inc.', price: '$224.23', change: '+1.12%', up: true },
+  { symbol: 'NVDA', name: 'NVIDIA Corp', price: '$128.88', change: '+3.45%', up: true },
+  { symbol: 'MSFT', name: 'Microsoft Corp', price: '$448.37', change: '+0.94%', up: true },
+  { symbol: 'GOOGL', name: 'Alphabet Inc.', price: '$178.21', change: '-0.38%', up: false },
 ];
 
-const TICKER_TAPE = [
-  { sym: 'RELIANCE.NS', price: '₹1,311.00', change: '+1.42%', up: true },
-  { sym: 'AAPL', price: '$352.48', change: '+0.85%', up: true },
-  { sym: 'TCS.NS', price: '₹3,920.10', change: '-0.45%', up: false },
-  { sym: 'NVDA', price: '$138.20', change: '+3.12%', up: true },
-  { sym: 'HDFCBANK.NS', price: '₹1,745.00', change: '+0.60%', up: true },
-  { sym: 'MSFT', price: '$425.60', change: '+1.10%', up: true },
-  { sym: 'INFY.NS', price: '₹1,845.50', change: '-0.32%', up: false },
-  { sym: 'GOOGL', price: '$182.90', change: '+1.75%', up: true },
+/* ───── Supported Market Ecosystem ───── */
+const MARKET_ECOSYSTEM = [
+  { name: 'NSE Nifty 50', desc: 'India' },
+  { name: 'BSE Sensex', desc: 'India' },
+  { name: 'NASDAQ 100', desc: 'US' },
+  { name: 'S&P 500', desc: 'US' },
+  { name: 'Scikit-Learn ML', desc: 'Model' },
+  { name: 'Zero Data-Leakage', desc: 'Verified' },
+];
+
+/* ───── Interactive Chart Sample Data ───── */
+const PREVIEW_ASSETS = {
+  'RELIANCE.NS': {
+    name: 'Reliance Industries Ltd',
+    price: '₹1,311.00',
+    change: '+1.33%',
+    up: true,
+    target: '₹1,328.45',
+    rsi: '59.7',
+    rsiStatus: 'Bullish Momentum',
+    trend: 'Above 20-Day & 50-Day SMAs',
+    series: [
+      { date: 'Oct 20', price: 1260.5 },
+      { date: 'Oct 23', price: 1272.0 },
+      { date: 'Oct 24', price: 1268.4 },
+      { date: 'Oct 25', price: 1285.0 },
+      { date: 'Oct 26', price: 1292.1 },
+      { date: 'Oct 27', price: 1288.6 },
+      { date: 'Oct 30', price: 1301.2 },
+      { date: 'Oct 31', price: 1305.8 },
+      { date: 'Nov 01', price: 1311.0 },
+      { date: 'Target (T+1)', price: 1328.45 },
+    ]
+  },
+  'NVDA': {
+    name: 'NVIDIA Corporation',
+    price: '$128.88',
+    change: '+3.45%',
+    up: true,
+    target: '$133.50',
+    rsi: '66.4',
+    rsiStatus: 'Strong Accumulation',
+    trend: 'Golden SMA Cross',
+    series: [
+      { date: 'Oct 20', price: 119.5 },
+      { date: 'Oct 23', price: 121.2 },
+      { date: 'Oct 24', price: 120.8 },
+      { date: 'Oct 25', price: 123.4 },
+      { date: 'Oct 26', price: 124.6 },
+      { date: 'Oct 27', price: 125.1 },
+      { date: 'Oct 30', price: 126.9 },
+      { date: 'Oct 31', price: 127.8 },
+      { date: 'Nov 01', price: 128.88 },
+      { date: 'Target (T+1)', price: 133.50 },
+    ]
+  },
+  'AAPL': {
+    name: 'Apple Inc.',
+    price: '$224.23',
+    change: '+1.12%',
+    up: true,
+    target: '$227.10',
+    rsi: '54.2',
+    rsiStatus: 'Neutral Uptrend',
+    trend: 'Ascending Support Channel',
+    series: [
+      { date: 'Oct 20', price: 218.0 },
+      { date: 'Oct 23', price: 219.5 },
+      { date: 'Oct 24', price: 220.2 },
+      { date: 'Oct 25', price: 221.8 },
+      { date: 'Oct 26', price: 222.1 },
+      { date: 'Oct 27', price: 221.9 },
+      { date: 'Oct 30', price: 223.4 },
+      { date: 'Oct 31', price: 223.8 },
+      { date: 'Nov 01', price: 224.23 },
+      { date: 'Target (T+1)', price: 227.10 },
+    ]
+  },
+  'TCS.NS': {
+    name: 'Tata Consultancy Services',
+    price: '₹3,940.20',
+    change: '+0.85%',
+    up: true,
+    target: '₹3,985.00',
+    rsi: '58.3',
+    rsiStatus: 'Consolidation Breakout',
+    trend: 'Above 50-Day SMA',
+    series: [
+      { date: 'Oct 20', price: 3860.0 },
+      { date: 'Oct 23', price: 3885.0 },
+      { date: 'Oct 24', price: 3892.0 },
+      { date: 'Oct 25', price: 3910.0 },
+      { date: 'Oct 26', price: 3905.0 },
+      { date: 'Oct 27', price: 3920.0 },
+      { date: 'Oct 30', price: 3928.0 },
+      { date: 'Oct 31', price: 3935.0 },
+      { date: 'Nov 01', price: 3940.2 },
+      { date: 'Target (T+1)', price: 3985.00 },
+    ]
+  }
+};
+
+/* ───── FAQ Accordion Data ───── */
+const FAQ_LIST = [
+  {
+    q: 'How does StockSense AI prevent data leakage in its equity models?',
+    a: 'Every model target is shifted strictly backward by one session (Target[t] = Close[t + 1]). Feature engineering, scaling, and train/test splits are conducted chronologically without future lookahead or shuffling.',
+    badge: 'Zero-Leakage'
+  },
+  {
+    q: 'Which stock exchanges and asset universes are actively supported?',
+    a: 'The platform provides seamless coverage for Indian equities traded on the National Stock Exchange (NSE) and Bombay Stock Exchange (BSE), alongside major US equities on NASDAQ and the New York Stock Exchange.',
+    badge: 'Multi-Market'
+  },
+  {
+    q: 'Does StockSense require costly third-party API subscriptions?',
+    a: 'No. The AI market commentary engine is built on deterministic quantitative rules and local Python analytics, providing instant market narratives without third-party token subscriptions.',
+    badge: '100% Free'
+  },
+  {
+    q: 'What happens if MongoDB is offline on my machine?',
+    a: 'The backend automatically activates an In-Memory Resilient Mode. You can freely explore real-time charts, model predictions, technical indicators, and manage watchlists without any database blockers.',
+    badge: 'Resilient Mode'
+  },
 ];
 
 export default function LandingPage() {
-  const { setAuthModalOpen, setAuthModalMode } = useStock();
   const navigate = useNavigate();
+  const { setAuthModalOpen, setAuthModalMode } = useStock();
+  const [activePreviewSymbol, setActivePreviewSymbol] = useState('RELIANCE.NS');
+  const [openFaq, setOpenFaq] = useState(0);
 
-  const [emailInput, setEmailInput] = useState('');
-  const [activeTab, setActiveTab] = useState('prediction');
-  const [openFaq, setOpenFaq] = useState(null);
-
-  const handleHeroSubmit = (e) => {
-    e.preventDefault();
-    setAuthModalMode('signup');
-    setAuthModalOpen(true);
-  };
+  const activeAsset = PREVIEW_ASSETS[activePreviewSymbol];
 
   const handleOpenLogin = () => {
     setAuthModalMode('login');
@@ -73,512 +426,394 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slash-obsidian text-slash-bone selection:bg-slash-copper/30 selection:text-white flex flex-col font-sans">
-      {/* 1. Fixed Landing Navigation Bar */}
-      <header className="sticky top-0 z-40 bg-slash-obsidian/95 backdrop-blur-md border-b border-slash-graphite px-4 lg:px-8 py-3.5">
-        <div className="flex items-center justify-between max-w-[1216px] mx-auto">
-          {/* Brand */}
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <span className="font-serif text-2xl font-normal text-white tracking-[0.01em] group-hover:text-slash-copper transition">
-              StockSense
-            </span>
-            <span className="text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-full bg-slash-carbon text-slash-copper border border-slash-copper/30">
-              AI
-            </span>
-          </Link>
+    <div className="min-h-screen bg-[#f7f7f5] text-[#7b7b7b] font-sans selection:bg-[#111]/10 selection:text-[#111]">
 
-          {/* Center Nav Links */}
-          <nav className="hidden md:flex items-center gap-6 text-xs text-slash-fog font-medium">
-            <a href="#features" className="hover:text-white transition">Capabilities</a>
-            <a href="#ml-pipeline" className="hover:text-white transition">ML Architecture</a>
-            <a href="#technicals" className="hover:text-white transition">Technicals</a>
-            <a href="#benchmarks" className="hover:text-white transition">Validation</a>
-            <a href="#faq" className="hover:text-white transition">FAQ</a>
-          </nav>
+      {/* ─────────────────────────────────────────────────────────────
+          1. HERO SECTION (Kindred Halftone Hands Canvas + Clean Stock Hero)
+      ───────────────────────────────────────────────────────────── */}
+      <section className="relative h-screen min-h-[660px] overflow-hidden bg-[#f7f7f5]">
+        {/* Dot-matrix canvas running in background */}
+        <DotMatrixCanvas />
 
-          {/* Right Action Buttons */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleOpenLogin}
-              className="px-4 py-2 rounded-full border border-slash-steel text-xs font-medium text-white hover:border-white transition"
-            >
-              Sign In
-            </button>
+        {/* Centered Top Nav */}
+        <nav className="relative z-10 flex items-center justify-center gap-[clamp(18px,2.6vw,40px)] pt-9 px-4 text-[13.5px]">
+          <a href="#" className="flex items-center gap-2 mr-[10px] font-semibold text-[15px] text-[#111] tracking-[-0.01em]">
+            <StockLogo size={20} />
+            StockSense
+          </a>
+          <a href="#preview" className="hidden md:inline text-[#3a3a3a] hover:text-[#000] transition-colors duration-200">Live Preview</a>
+          <a href="#features" className="hidden md:inline text-[#3a3a3a] hover:text-[#000] transition-colors duration-200">Modules</a>
+          <a href="#trust" className="hidden md:inline text-[#3a3a3a] hover:text-[#000] transition-colors duration-200">Trust</a>
+          <a href="#faq" className="hidden md:inline text-[#3a3a3a] hover:text-[#000] transition-colors duration-200">FAQ</a>
+          <button
+            onClick={() => navigate('/explore')}
+            className="hidden md:inline text-[#3a3a3a] hover:text-[#000] transition-colors duration-200"
+          >
+            Explore
+          </button>
+          <button
+            onClick={handleOpenLogin}
+            className="bg-[#111] text-white px-[21px] py-[10px] rounded-full font-medium ml-[10px] transition-transform duration-250 hover:-translate-y-px"
+          >
+            Sign In
+          </button>
+        </nav>
+
+        {/* Copy block — Perfectly Centered in Quiet Zone with Crystal-Clear Visibility */}
+        <div
+          className="absolute left-1/2 top-[24%] -translate-x-1/2 text-center z-10"
+          style={{ width: 'min(92vw, 720px)' }}
+        >
+          {/* Eyebrow Pill */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-xs font-medium text-emerald-800 mb-4 shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Empowering Disciplined Equity Analysis</span>
+            <span className="text-[10px] font-semibold uppercase px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">
+              LIVE FEEDS
+            </span>
+          </div>
+
+          {/* Headline: Exactly what the user liked */}
+          <h1
+            className="font-medium tracking-[-0.035em] leading-[1.04]"
+            style={{ fontSize: 'clamp(38px, 3.75vw, 68px)' }}
+          >
+            <span className="block text-emerald-600 font-medium">Decoding</span>
+            <span className="block text-[#111]">Market Dynamics.</span>
+          </h1>
+
+          {/* Subtitle: 100% Readable with Clean Spacing & Contrast — Zero dots overlapping */}
+          <p
+            className="mt-5 mx-auto max-w-[460px] text-[#4b5563] font-normal leading-[1.5]"
+            style={{ fontSize: 'clamp(13.5px, 1.05vw, 16px)' }}
+          >
+            We don't just chart price action. We empower investors with zero-leakage predictive intelligence, momentum envelopes, and multi-market clarity across NSE, BSE, and US exchanges.
+          </p>
+
+          {/* CTA Wrapper with Rainbow Underglow PEAKING OUT UNDER PILL */}
+          <div className="inline-block relative" style={{ marginTop: 'clamp(34px, 3.6vw, 52px)' }}>
+            <div
+              className="absolute left-[10%] right-[10%] h-4 rounded-[50%] transition-all duration-300"
+              style={{
+                bottom: '-6px',
+                background: 'linear-gradient(90deg, #ffcf5a, #7dffa8, #5ad7ff, #9b7bff, #ff6fd8, #ffb36b)',
+                filter: 'blur(9px)',
+                opacity: 0.85,
+              }}
+            />
             <button
               onClick={() => navigate('/dashboard')}
-              className="px-5 py-2 rounded-full bg-white text-black hover:bg-slate-200 text-xs font-semibold transition flex items-center gap-1.5 shadow-sm"
+              className="relative z-10 bg-[#111] text-white text-[13.5px] font-medium px-6 py-[11px] rounded-full transition-all duration-300 hover:-translate-y-px flex items-center gap-2 cursor-pointer shadow-sm"
             >
-              <span>Launch Terminal</span>
+              <span>Launch Market Terminal</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
-      </header>
 
-      {/* 2. Live Market Ticker Tape */}
-      <div className="w-full bg-slash-onyx border-b border-slash-graphite py-2 overflow-hidden select-none">
-        <div className="flex items-center gap-8 animate-marquee whitespace-nowrap text-xs font-mono">
+        {/* Partner logos / Markets across bottom */}
+        <div
+          className="absolute left-0 right-0 z-10 flex items-center justify-center flex-wrap px-4 text-[#8d8d8d] font-medium"
+          style={{
+            bottom: 'clamp(28px, 6vh, 64px)',
+            gap: 'clamp(20px, 4vw, 56px)',
+            fontSize: 'clamp(13px, 1.1vw, 16px)',
+            letterSpacing: '-0.01em',
+          }}
+        >
+          {MARKET_ECOSYSTEM.map((m) => (
+            <span key={m.name} className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span>{m.name}</span>
+            </span>
+          ))}
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          2. TICKER RIBBON WITH CLEAN ACCENT COLORS
+      ───────────────────────────────────────────────────────────── */}
+      <div className="bg-white border-y border-[#e8e8e6] overflow-hidden py-3">
+        <div className="animate-marquee whitespace-nowrap flex items-center text-xs">
           {TICKER_TAPE.concat(TICKER_TAPE).map((item, idx) => (
-            <div key={idx} className="flex items-center gap-2 px-2">
-              <span className="text-white font-medium">{item.sym}</span>
-              <span className="text-slash-fog">{item.price}</span>
+            <div
+              key={idx}
+              className="flex items-center mx-6 gap-2 cursor-pointer hover:opacity-75 transition"
+              onClick={() => navigate(`/stocks/${encodeURIComponent(item.symbol)}`)}
+            >
+              <span className="font-medium text-[#111]">{item.symbol}</span>
+              <span className="text-[#9a9a9a]">{item.price}</span>
               <span
-                className={`text-[11px] px-1.5 py-0.2 rounded-full ${
+                className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
                   item.up
-                    ? 'text-slash-sage bg-slash-sageBg'
-                    : 'text-slash-rose bg-slash-roseBg'
+                    ? 'text-emerald-700 bg-emerald-50 border border-emerald-200/60'
+                    : 'text-rose-700 bg-rose-50 border border-rose-200/60'
                 }`}
               >
                 {item.change}
               </span>
-              <span className="text-slash-graphite mx-2">|</span>
+              <span className="text-[#e8e8e6] ml-4">|</span>
             </div>
           ))}
         </div>
       </div>
 
-      <main className="flex-1 max-w-[1216px] mx-auto px-4 lg:px-8 py-12 lg:py-20 space-y-24">
-        {/* 3. Hero Section (Split Composition) */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center pt-4">
-          {/* Left Column: Serif Headline & Action */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slash-carbon border border-slash-graphite text-[12px] font-semibold text-slash-copper uppercase tracking-[-0.02em]">
-              <span className="w-1.5 h-1.5 rounded-full bg-slash-copper animate-ping"></span>
-              <span>Midnight Vault • Quantitative Intelligence</span>
-            </div>
+      {/* ─────────────────────────────────────────────────────────────
+          3. MAIN CONTENT CONTAINER (Kindred Clean Layout)
+      ───────────────────────────────────────────────────────────── */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 space-y-24">
 
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-[68px] leading-[1.08] font-normal text-white tracking-[0.01em]">
-              Institutional Quantitative Intelligence for the Modern Investor.
-            </h1>
-
-            <p className="text-base sm:text-lg text-slash-fog leading-relaxed max-w-xl font-light">
-              Bridge transparent mathematical indicator convergence with rigorous, zero-leakage machine learning across Indian (NSE/BSE) and US (NASDAQ/NYSE) equities.
+        {/* ── SECTION: Interactive Live Equity Showcase ── */}
+        <section id="preview" className="space-y-6">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <span className="text-xs uppercase tracking-wider text-[#9a9a9a] font-medium">
+              Live Trajectory Verification
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-medium text-[#111] tracking-[-0.035em]">
+              Real-Time Algorithmic Forecast
+            </h2>
+            <p className="text-[15px] text-[#7b7b7b] leading-relaxed">
+              Continuous equity data feeds compared chronologically against zero-leakage regression targets.
             </p>
-
-            {/* Pill Email Input joined to White Button */}
-            <form onSubmit={handleHeroSubmit} className="pt-2 max-w-md">
-              <div className="flex flex-col sm:flex-row gap-2.5 p-1 rounded-full bg-slash-onyx border border-slash-steel/70 focus-within:border-white transition">
-                <input
-                  type="email"
-                  placeholder="Enter your institutional email..."
-                  value={emailInput}
-                  onChange={(e) => setEmailInput(e.target.value)}
-                  className="bg-transparent pl-5 pr-2 py-2 text-sm text-white placeholder-slash-ash focus:outline-none flex-1"
-                />
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 rounded-full bg-white text-black hover:bg-slate-200 text-xs font-semibold transition shrink-0"
-                >
-                  Get Started
-                </button>
-              </div>
-            </form>
-
-            <div className="flex flex-wrap items-center gap-5 text-xs text-slash-fog pt-1">
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-slash-sage" />
-                <span>100% Anti-Leakage Model Split</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-slash-copper" />
-                <span>Zero Paid LLM Requirements</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-slash-sage" />
-                <span>Free Guest Terminal Access</span>
-              </span>
-            </div>
           </div>
 
-          {/* Right Column: Hero Chart Showcase Card */}
-          <div className="lg:col-span-5">
-            <div className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-6 lg:p-7 shadow-2xl relative space-y-5">
-              <div className="flex items-center justify-between pb-3 border-b border-slash-graphite">
+          {/* Interactive Card in Pure Kindred White Aesthetic */}
+          <div className="rounded-[24px] bg-white border border-[#e8e8e6] p-6 sm:p-10 shadow-xs space-y-6">
+            {/* Header: Selector pills & Price details */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#e8e8e6]">
+              {/* Asset Selector Buttons */}
+              <div className="flex flex-wrap items-center gap-2">
+                {Object.keys(PREVIEW_ASSETS).map((sym) => (
+                  <button
+                    key={sym}
+                    onClick={() => setActivePreviewSymbol(sym)}
+                    className={`px-4 py-2 rounded-full text-xs font-medium transition cursor-pointer ${
+                      activePreviewSymbol === sym
+                        ? 'bg-[#111] text-white shadow-xs'
+                        : 'bg-[#f0f0ee] text-[#4b5563] hover:bg-[#e8e8e6]'
+                    }`}
+                  >
+                    {sym}
+                  </button>
+                ))}
+              </div>
+
+              {/* Price & Target badge */}
+              <div className="flex items-center gap-6">
                 <div>
-                  <div className="text-[11px] font-mono text-slash-copper uppercase tracking-wider">
-                    Simulated Target: AAPL / RELIANCE
-                  </div>
-                  <div className="font-serif text-3xl font-normal text-white mt-0.5 tracking-[0.01em]">
-                    $ 352.48
-                  </div>
+                  <div className="text-[10px] text-[#9a9a9a] uppercase font-medium">Latest Settlement</div>
+                  <div className="text-2xl font-semibold text-[#111]">{activeAsset.price}</div>
                 </div>
-                <div className="text-right">
-                  <span className="inline-flex items-center gap-1 font-mono text-xs font-medium px-2.5 py-0.5 rounded-full bg-slash-sageBg border border-slash-sage/30 text-slash-sage">
-                    <TrendingUp className="w-3 h-3" />
-                    <span>+1.85% Session</span>
-                  </span>
-                  <div className="text-[10px] text-slash-ash mt-1">Tomorrow's Close Projected</div>
+                <div className="pl-6 border-l border-[#e8e8e6]">
+                  <div className="text-[10px] text-emerald-700 uppercase font-medium">Target (T+1)</div>
+                  <div className="text-2xl font-semibold text-emerald-600">{activeAsset.target}</div>
                 </div>
               </div>
+            </div>
 
-              {/* Gilded Chart Line */}
-              <div className="w-full pt-1" style={{ height: 180, minHeight: 180 }}>
-                <ResponsiveContainer width="100%" height={180}>
-                  <AreaChart data={HERO_CHART_DATA}>
-                    <defs>
-                      <linearGradient id="heroGilded" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#ae9357" stopOpacity={0.4} />
-                        <stop offset="95%" stopColor="#ae9357" stopOpacity={0.0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1c1d22" vertical={false} />
-                    <XAxis dataKey="day" stroke="#5e616e" tick={{ fontSize: 9 }} />
-                    <YAxis stroke="#5e616e" domain={['auto', 'auto']} tick={{ fontSize: 9 }} />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: '#040406',
-                        borderColor: '#2e3038',
-                        borderRadius: '8px',
-                        color: '#fff',
-                        fontSize: '11px',
-                      }}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="price"
-                      name="Price Forecast"
-                      stroke="#ae9357"
-                      strokeWidth={2}
-                      fillOpacity={1}
-                      fill="url(#heroGilded)"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+            {/* Recharts Area with Clean Cyan / Emerald Signal Line */}
+            <div className="w-full pt-2" style={{ height: 280, minHeight: 280 }}>
+              <ResponsiveContainer width="100%" height={280}>
+                <AreaChart data={activeAsset.series}>
+                  <defs>
+                    <linearGradient id="kindredPreviewGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#00b3dd" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="#00b3dd" stopOpacity={0.0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0ee" vertical={false} />
+                  <XAxis dataKey="date" stroke="#9a9a9a" tick={{ fontSize: 11, fill: '#7b7b7b' }} />
+                  <YAxis stroke="#9a9a9a" domain={['auto', 'auto']} tick={{ fontSize: 11, fill: '#7b7b7b' }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#ffffff',
+                      borderColor: '#e8e8e6',
+                      borderRadius: '12px',
+                      color: '#111111',
+                      fontSize: '12px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+                    }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="price"
+                    name="Settlement Trajectory"
+                    stroke="#00b3dd"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#kindredPreviewGrad)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Sub-Metric Panels with Clean Kindred Styling */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div className="p-4 rounded-xl bg-[#fafaf8] border border-[#e8e8e6] space-y-1">
+                <div className="text-[10px] font-medium text-[#9a9a9a] uppercase tracking-wider">Wilder RSI Momentum</div>
+                <div className="text-xl font-medium text-[#111]">{activeAsset.rsi}</div>
+                <div className="text-xs text-[#7b7b7b]">{activeAsset.rsiStatus}</div>
               </div>
 
-              {/* Indicator Pills Row */}
-              <div className="grid grid-cols-3 gap-2 pt-1 font-mono text-center">
-                <div className="p-2.5 rounded-[8px] bg-slash-carbon border border-slash-graphite">
-                  <div className="text-[10px] text-slash-fog">RSI-14</div>
-                  <div className="font-bold text-xs text-slash-sage mt-0.5">59.7 (Positive)</div>
-                </div>
-                <div className="p-2.5 rounded-[8px] bg-slash-carbon border border-slash-graphite">
-                  <div className="text-[10px] text-slash-fog">MACD</div>
-                  <div className="font-bold text-xs text-white mt-0.5">+2.45 Divergence</div>
-                </div>
-                <div className="p-2.5 rounded-[8px] bg-slash-carbon border border-slash-graphite">
-                  <div className="text-[10px] text-slash-fog">Regime</div>
-                  <div className="font-bold text-xs text-slash-copper mt-0.5">Bullish Trend</div>
-                </div>
+              <div className="p-4 rounded-xl bg-[#fafaf8] border border-[#e8e8e6] space-y-1">
+                <div className="text-[10px] font-medium text-[#9a9a9a] uppercase tracking-wider">Moving Average Regime</div>
+                <div className="text-xl font-medium text-[#111]">Aligned</div>
+                <div className="text-xs text-[#7b7b7b]">{activeAsset.trend}</div>
               </div>
 
+              <div className="p-4 rounded-xl bg-[#fafaf8] border border-[#e8e8e6] space-y-1">
+                <div className="text-[10px] font-medium text-emerald-700 uppercase tracking-wider">T+1 Target Projection</div>
+                <div className="text-xl font-medium text-emerald-600">{activeAsset.target}</div>
+                <div className="text-xs text-[#7b7b7b]">Zero future-data lookahead</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── SECTION: Core Intelligence Modules ── */}
+        <section id="features" className="space-y-12">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <span className="text-xs uppercase tracking-wider text-[#9a9a9a] font-medium">What we offer</span>
+            <h2 className="text-3xl sm:text-4xl font-medium text-[#111] tracking-[-0.035em]">
+              Quantitative Intelligence Modules
+            </h2>
+            <p className="text-[15px] text-[#7b7b7b] leading-relaxed">
+              Machine learning forecasts, technical indicators, and deterministic commentary in one focused experience.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Card 1: Machine Learning */}
+            <div className="rounded-[24px] bg-white border border-[#e8e8e6] p-8 space-y-5 hover:shadow-md transition-shadow duration-300">
+              <div className="w-10 h-10 rounded-2xl bg-[#f0f0ee] text-[#111] flex items-center justify-center">
+                <Cpu className="w-5 h-5" />
+              </div>
+              <h3 className="text-xl font-medium text-[#111] tracking-[-0.02em]">ML Price Forecasting</h3>
+              <p className="text-sm text-[#7b7b7b] leading-relaxed">
+                Zero-leakage regressors with chronological train/test splits. Target prices shifted backward by one session (Target[t] = Close[t + 1]).
+              </p>
               <button
-                onClick={() => navigate('/dashboard')}
-                className="w-full py-2.5 rounded-full bg-slash-carbon hover:bg-slash-graphite border border-slash-graphite text-xs font-medium text-white transition flex items-center justify-center gap-2"
+                onClick={() => navigate('/predictions/RELIANCE.NS')}
+                className="text-[13px] font-medium text-[#111] flex items-center gap-1.5 hover:gap-2.5 transition-all cursor-pointer"
               >
-                <span>Inspect Full Live Terminal</span>
-                <ArrowRight className="w-3.5 h-3.5 text-slash-copper" />
+                View Predictions <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Card 2: Technicals */}
+            <div className="rounded-[24px] bg-white border border-[#e8e8e6] p-8 space-y-5 hover:shadow-md transition-shadow duration-300">
+              <div className="w-10 h-10 rounded-2xl bg-[#f0f0ee] text-[#111] flex items-center justify-center">
+                <Sliders className="w-5 h-5" />
+              </div>
+              <h3 className="text-xl font-medium text-[#111] tracking-[-0.02em]">Technical Indicators</h3>
+              <p className="text-sm text-[#7b7b7b] leading-relaxed">
+                Wilder RSI-14, MACD divergence, Bollinger Bands, and exponential moving averages computed in real time.
+              </p>
+              <button
+                onClick={() => navigate('/technical/RELIANCE.NS')}
+                className="text-[13px] font-medium text-[#111] flex items-center gap-1.5 hover:gap-2.5 transition-all cursor-pointer"
+              >
+                View Technicals <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Card 3: AI Commentary */}
+            <div className="rounded-[24px] bg-white border border-[#e8e8e6] p-8 space-y-5 hover:shadow-md transition-shadow duration-300">
+              <div className="w-10 h-10 rounded-2xl bg-[#f0f0ee] text-[#111] flex items-center justify-center">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <h3 className="text-xl font-medium text-[#111] tracking-[-0.02em]">AI Market Commentary</h3>
+              <p className="text-sm text-[#7b7b7b] leading-relaxed">
+                Deterministic natural-language insights that translate quantitative signals into concise prose without paid external API keys.
+              </p>
+              <button
+                onClick={() => navigate('/insights/RELIANCE.NS')}
+                className="text-[13px] font-medium text-[#111] flex items-center gap-1.5 hover:gap-2.5 transition-all cursor-pointer"
+              >
+                Read Insights <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Card 4: Multi-Market Universe */}
+            <div className="rounded-[24px] bg-white border border-[#e8e8e6] p-8 space-y-5 hover:shadow-md transition-shadow duration-300">
+              <div className="w-10 h-10 rounded-2xl bg-[#f0f0ee] text-[#111] flex items-center justify-center">
+                <Globe className="w-5 h-5" />
+              </div>
+              <h3 className="text-xl font-medium text-[#111] tracking-[-0.02em]">Dual-Market Coverage</h3>
+              <p className="text-sm text-[#7b7b7b] leading-relaxed">
+                Seamlessly analyze Indian equities (NSE/BSE in ₹ INR) alongside major US stocks (NASDAQ/NYSE in $ USD).
+              </p>
+              <button
+                onClick={() => navigate('/explore')}
+                className="text-[13px] font-medium text-[#111] flex items-center gap-1.5 hover:gap-2.5 transition-all cursor-pointer"
+              >
+                Explore Stocks <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
         </section>
 
-        {/* 4. Stat Callouts Section */}
-        <section id="benchmarks" className="py-12 border-y border-slash-graphite">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-            <div className="space-y-1">
-              <div className="font-serif text-4xl lg:text-5xl font-normal text-white tracking-[0.01em]">100%</div>
-              <div className="text-xs uppercase tracking-wider font-semibold text-slash-copper">Anti-Leakage Formulation</div>
-              <div className="text-[12px] text-slash-fog">Chronological Time-Series Split</div>
-            </div>
-
-            <div className="space-y-1">
-              <div className="font-serif text-4xl lg:text-5xl font-normal text-white tracking-[0.01em]">2</div>
-              <div className="text-xs uppercase tracking-wider font-semibold text-slash-copper">Major Market Jurisdictions</div>
-              <div className="text-[12px] text-slash-fog">NSE/BSE India & US NASDAQ/NYSE</div>
-            </div>
-
-            <div className="space-y-1">
-              <div className="font-serif text-4xl lg:text-5xl font-normal text-white tracking-[0.01em]">8</div>
-              <div className="text-xs uppercase tracking-wider font-semibold text-slash-copper">Core Indicator Algorithms</div>
-              <div className="text-[12px] text-slash-fog">SMA, EMA, RSI, MACD, Bollinger</div>
-            </div>
-
-            <div className="space-y-1">
-              <div className="font-serif text-4xl lg:text-5xl font-normal text-white tracking-[0.01em]">&lt;500ms</div>
-              <div className="text-xs uppercase tracking-wider font-semibold text-slash-copper">Inference Latency</div>
-              <div className="text-[12px] text-slash-fog">FastAPI + Scikit-Learn Engine</div>
-            </div>
-          </div>
-        </section>
-
-        {/* 5. Capabilities & Features (3-Column Slash Card Grid) */}
-        <section id="features" className="space-y-10">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <div className="text-[13px] font-semibold text-slash-copper uppercase tracking-[-0.02em]">
-              Precision Engineered
-            </div>
-            <h2 className="font-serif text-3xl sm:text-4xl font-normal text-white tracking-[0.01em]">
-              The Full-Stack Quantitative Architecture
+        {/* ── SECTION: Zero-Leakage Benchmark Verification ── */}
+        <section id="trust" className="rounded-[24px] bg-[#111] p-8 lg:p-12 text-white space-y-6">
+          <div className="max-w-2xl space-y-2">
+            <span className="text-xs uppercase tracking-wider text-white/50 font-medium">Empirical Verification</span>
+            <h2 className="text-3xl sm:text-4xl font-medium text-white tracking-[-0.035em]">
+              Zero-Leakage Benchmarks
             </h2>
-            <p className="text-sm text-slash-fog">
-              Eliminating the divide between mathematical indicator rules and empirical predictive models.
+            <p className="text-sm text-white/60 leading-relaxed">
+              MAE, RMSE, and Directional Accuracy computed strictly on unseen chronological test sessions.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-7 space-y-3 hover:border-slash-slate transition">
-              <div className="text-[12px] font-semibold text-slash-copper uppercase tracking-[-0.02em]">
-                Multi-Market Engine
-              </div>
-              <h3 className="font-serif text-xl font-normal text-white">Indian & US Equities</h3>
-              <p className="text-xs text-slash-fog leading-relaxed">
-                Native ticker handling with currency awareness. View Indian securities in INR (₹) and US equities in USD ($) without distorted cross-comparisons.
-              </p>
-            </div>
-
-            <div className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-7 space-y-3 hover:border-slash-slate transition">
-              <div className="text-[12px] font-semibold text-slash-copper uppercase tracking-[-0.02em]">
-                Machine Learning
-              </div>
-              <h3 className="font-serif text-xl font-normal text-white">Target-Shifted Regressors</h3>
-              <p className="text-xs text-slash-fog leading-relaxed">
-                Linear Regression and Random Forest Regressors trained on chronologically separated datasets (Target[t] = Close[t + 1]) to guarantee zero lookahead leakage.
-              </p>
-            </div>
-
-            <div className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-7 space-y-3 hover:border-slash-slate transition">
-              <div className="text-[12px] font-semibold text-slash-copper uppercase tracking-[-0.02em]">
-                Momentum Envelopes
-              </div>
-              <h3 className="font-serif text-xl font-normal text-white">Mathematical Indicators</h3>
-              <p className="text-xs text-slash-fog leading-relaxed">
-                Calculate SMA 20, SMA 50, EMA 20, Wilder's smoothed RSI 14, MACD (12, 26, 9), and 2-standard-deviation Bollinger Bands in real time.
-              </p>
-            </div>
-
-            <div className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-7 space-y-3 hover:border-slash-slate transition">
-              <div className="text-[12px] font-semibold text-slash-copper uppercase tracking-[-0.02em]">
-                Explainable AI
-              </div>
-              <h3 className="font-serif text-xl font-normal text-white">Deterministic Insights</h3>
-              <p className="text-xs text-slash-fog leading-relaxed">
-                Automated plain-English market synthesis explaining trend consensus without expensive third-party LLM dependencies.
-              </p>
-            </div>
-
-            <div className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-7 space-y-3 hover:border-slash-slate transition">
-              <div className="text-[12px] font-semibold text-slash-copper uppercase tracking-[-0.02em]">
-                Portfolio Ledger
-              </div>
-              <h3 className="font-serif text-xl font-normal text-white">MongoDB Persistence</h3>
-              <p className="text-xs text-slash-fog leading-relaxed">
-                Maintain personalized stock watchlists stored in MongoDB, with seamless automatic fallback to resilient in-memory storage.
-              </p>
-            </div>
-
-            <div className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-7 space-y-3 hover:border-slash-slate transition">
-              <div className="text-[12px] font-semibold text-slash-copper uppercase tracking-[-0.02em]">
-                Rigorous Evaluation
-              </div>
-              <h3 className="font-serif text-xl font-normal text-white">Honest Loss Metrics</h3>
-              <p className="text-xs text-slash-fog leading-relaxed">
-                Actual MAE, RMSE, and Directional Accuracy calculated on unseen chronological test sessions compared directly against a naive baseline.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* 6. Interactive Terminal Playground Preview */}
-        <section id="technicals" className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-8 lg:p-12 space-y-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slash-graphite">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-white/10">
             <div>
-              <div className="text-[13px] font-semibold text-slash-copper uppercase tracking-[-0.02em]">
-                Live Terminal Preview
-              </div>
-              <h2 className="font-serif text-3xl font-normal text-white tracking-[0.01em] mt-1">
-                Explore The Analysis Suite
-              </h2>
-              <p className="text-xs text-slash-fog mt-1">
-                Preview how the platform processes quantitative signals before entering.
-              </p>
+              <div className="text-4xl font-medium text-white">100%</div>
+              <div className="text-xs text-white/50 mt-1 uppercase tracking-wider">Anti-Leakage Split</div>
+              <div className="text-xs text-white/40 mt-0.5">Target[t] = Close[t + 1] offset</div>
             </div>
-
-            <div className="flex rounded-full bg-slash-carbon border border-slash-graphite p-1 self-start md:self-auto">
-              {[
-                { id: 'prediction', label: 'AI Forecasting' },
-                { id: 'technicals', label: 'Technicals' },
-                { id: 'insights', label: 'Market Insights' },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-medium transition ${
-                    activeTab === tab.id
-                      ? 'bg-white text-black font-semibold'
-                      : 'text-slash-fog hover:text-white'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
+            <div>
+              <div className="text-4xl font-medium text-white">58.2%</div>
+              <div className="text-xs text-white/50 mt-1 uppercase tracking-wider">Directional Accuracy</div>
+              <div className="text-xs text-white/40 mt-0.5">Above naive drift baseline</div>
+            </div>
+            <div>
+              <div className="text-4xl font-medium text-white">&lt;500ms</div>
+              <div className="text-xs text-white/50 mt-1 uppercase tracking-wider">Inference Latency</div>
+              <div className="text-xs text-white/40 mt-0.5">Native Scikit-Learn engine</div>
             </div>
           </div>
-
-          {/* Interactive Tab Content */}
-          {activeTab === 'prediction' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center animate-fadeIn">
-              <div className="space-y-4">
-                <span className="text-[11px] font-mono text-slash-copper uppercase tracking-wider">
-                  Chronological ML Regressor
-                </span>
-                <h3 className="font-serif text-2xl font-normal text-white">
-                  Next-Day Settlement Price Projection
-                </h3>
-                <p className="text-xs text-slash-fog leading-relaxed">
-                  Our pipeline avoids lookahead bias by shifting target values by one session. The best performing model (Linear Regression or Random Forest) is dynamically chosen by benchmarking out-of-sample RMSE.
-                </p>
-                <div className="p-4 rounded-[8px] bg-slash-carbon border border-slash-graphite space-y-2 text-xs font-mono">
-                  <div className="flex justify-between text-white">
-                    <span>Algorithm:</span>
-                    <span className="text-slash-copper">Random Forest Regressor</span>
-                  </div>
-                  <div className="flex justify-between text-white">
-                    <span>Out-of-Sample MAE:</span>
-                    <span>27.71 (INR/USD)</span>
-                  </div>
-                  <div className="flex justify-between text-white">
-                    <span>Directional Accuracy:</span>
-                    <span className="text-slash-sage">58.2% Accurate Shifts</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-6 rounded-[10px] bg-slash-carbon border border-slash-graphite space-y-4">
-                <div className="text-[11px] font-mono text-slash-ash uppercase">Sample Forecast Output</div>
-                <div className="flex items-baseline justify-between">
-                  <div>
-                    <div className="text-xs text-slash-fog">Current Close</div>
-                    <div className="font-serif text-2xl text-white">₹ 1,311.00</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-xs text-slash-copper">Next Day Forecast</div>
-                    <div className="font-serif text-2xl text-slash-sage font-medium">₹ 1,328.45 (+1.33%)</div>
-                  </div>
-                </div>
-                <div className="text-[11px] text-slash-ash leading-relaxed border-t border-slash-graphite/60 pt-3">
-                  Forecast generated with 17 engineered features including 20-day SMA, 14-day smoothed RSI, and 5-session lagged returns.
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'technicals' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center animate-fadeIn">
-              <div className="space-y-4">
-                <span className="text-[11px] font-mono text-slash-copper uppercase tracking-wider">
-                  Mathematical Momentum
-                </span>
-                <h3 className="font-serif text-2xl font-normal text-white">
-                  Multi-Factor Technical Envelopes
-                </h3>
-                <p className="text-xs text-slash-fog leading-relaxed">
-                  Every asset is analyzed using 8 mathematical formulas. Moving averages provide directional smoothing while Wilder's RSI and MACD identify momentum acceleration.
-                </p>
-                <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                  <div className="p-3 rounded-[8px] bg-slash-carbon border border-slash-graphite">
-                    <span className="text-slash-fog text-[10px]">SMA 20/50</span>
-                    <div className="text-white font-bold mt-1">Golden Cross Active</div>
-                  </div>
-                  <div className="p-3 rounded-[8px] bg-slash-carbon border border-slash-graphite">
-                    <span className="text-slash-fog text-[10px]">Bollinger (20,2)</span>
-                    <div className="text-slash-copper font-bold mt-1">Upper Envelope Probe</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-6 rounded-[10px] bg-slash-carbon border border-slash-graphite space-y-3">
-                <div className="text-[11px] font-mono text-slash-ash uppercase">Deterministic Regime Status</div>
-                <div className="font-serif text-2xl text-white">Bullish Regime Verified</div>
-                <ul className="space-y-1.5 text-xs text-slash-fog">
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-slash-sage"></span>
-                    <span>Price holds comfortably above 20-day and 50-day moving averages.</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-slash-sage"></span>
-                    <span>14-period RSI sits at 60.3, showing solid buyer interest without overheating.</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-slash-copper"></span>
-                    <span>MACD line is expanding positively above its signal line.</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'insights' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center animate-fadeIn">
-              <div className="space-y-4">
-                <span className="text-[11px] font-mono text-slash-copper uppercase tracking-wider">
-                  Automated Commentary
-                </span>
-                <h3 className="font-serif text-2xl font-normal text-white">
-                  Natural Language Synthesis
-                </h3>
-                <p className="text-xs text-slash-fog leading-relaxed">
-                  Instead of cryptic numbers, StockSense AI generates concise editorial summaries synthesizing momentum, volume, and predictive forecasts into plain English.
-                </p>
-              </div>
-
-              <div className="p-6 rounded-[10px] bg-slash-carbon border border-slash-graphite space-y-3">
-                <div className="text-[11px] font-mono text-slash-copper uppercase">Generated Market Summary</div>
-                <p className="text-xs text-slash-bone leading-relaxed font-light">
-                  "Reliance Industries Ltd (RELIANCE.NS) is currently exhibiting an overall bullish technical structure. The asset trades at ₹1,311.00. Key indicators demonstrate positive alignment across moving averages and momentum oscillators. The Random Forest model projects an estimated next-session close of ₹1,328.45 (+1.33%)."
-                </p>
-              </div>
-            </div>
-          )}
         </section>
 
-        {/* 7. Frequently Asked Questions Section */}
+        {/* ── SECTION: Frequently Asked Questions ── */}
         <section id="faq" className="space-y-8 max-w-3xl mx-auto">
           <div className="text-center space-y-2">
-            <div className="text-[13px] font-semibold text-slash-copper uppercase tracking-[-0.02em]">
-              Clear Answers
-            </div>
-            <h2 className="font-serif text-3xl font-normal text-white tracking-[0.01em]">
+            <span className="text-xs uppercase tracking-wider text-[#9a9a9a] font-medium">Questions</span>
+            <h2 className="text-3xl font-medium text-[#111] tracking-[-0.035em]">
               Frequently Asked Questions
             </h2>
           </div>
 
           <div className="space-y-3">
-            {[
-              {
-                q: 'How does StockSense AI prevent future-data leakage in ML models?',
-                a: 'StockSense AI strictly shifts target closing prices backward by one session (Target[t] = Close[t + 1]). Feature engineering and train/test splits are performed chronologically (80% train, 20% test) with zero random shuffling, ensuring models are never trained on information from the future.',
-              },
-              {
-                q: 'Which stock exchanges are supported?',
-                a: 'The application supports Indian equities from the National Stock Exchange (NSE) and Bombay Stock Exchange (BSE) via tickers ending in .NS and .BO, as well as US equities traded on NASDAQ and NYSE.',
-              },
-              {
-                q: 'Does StockSense AI require a paid LLM API key?',
-                a: 'No. The AI market insight engine is fully deterministic and runs natively in Python without requiring paid OpenAI or Anthropic API keys, ensuring zero subscription costs.',
-              },
-              {
-                q: 'What happens if MongoDB is not installed on my computer?',
-                a: 'The backend automatically detects database connectivity. If MongoDB is offline, it activates a resilient Demo In-Memory Mode so you can still use all watchlist, ML, and technical analysis features seamlessly.',
-              },
-            ].map((faq, idx) => (
-              <div
-                key={idx}
-                className="rounded-[10px] bg-slash-onyx border border-slash-graphite overflow-hidden"
-              >
+            {FAQ_LIST.map((faq, idx) => (
+              <div key={idx} className="rounded-2xl bg-white border border-[#e8e8e6] overflow-hidden shadow-xs">
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full p-5 text-left flex items-center justify-between text-sm font-medium text-white hover:bg-slash-carbon transition"
+                  className="w-full p-5 text-left flex items-center justify-between text-sm font-medium text-[#111] hover:bg-[#fafaf8] transition cursor-pointer"
                 >
-                  <span>{faq.q}</span>
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-[10px] font-medium uppercase px-2 py-0.5 rounded-full bg-[#f0f0ee] text-[#7b7b7b]">
+                      {faq.badge}
+                    </span>
+                    <span>{faq.q}</span>
+                  </div>
                   <ChevronDown
-                    className={`w-4 h-4 text-slash-copper transition-transform ${
-                      openFaq === idx ? 'rotate-180' : ''
+                    className={`w-4 h-4 text-[#9a9a9a] transition-transform duration-200 shrink-0 ${
+                      openFaq === idx ? 'rotate-180 text-[#111]' : ''
                     }`}
                   />
                 </button>
                 {openFaq === idx && (
-                  <div className="px-5 pb-5 pt-1 text-xs text-slash-fog leading-relaxed border-t border-slash-graphite/40">
+                  <div className="px-5 pb-5 text-sm text-[#7b7b7b] leading-relaxed border-t border-[#e8e8e6] pt-3">
                     {faq.a}
                   </div>
                 )}
@@ -587,68 +822,46 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 8. Final Call to Action */}
-        <section className="rounded-[10px] bg-gradient-to-br from-slash-onyx via-slash-carbon to-[#14120f] border border-slash-copper/30 p-10 lg:p-16 text-center space-y-6">
-          <div className="text-[13px] font-semibold text-slash-copper uppercase tracking-[-0.02em]">
-            Immediate Access
-          </div>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-white tracking-[0.01em] max-w-2xl mx-auto">
-            Experience the Future of Algorithmic Market Analytics.
+        {/* ── SECTION: Final Call To Action ── */}
+        <section className="rounded-[24px] bg-white border border-[#e8e8e6] p-10 sm:p-16 text-center space-y-6 shadow-xs">
+          <h2 className="text-3xl sm:text-4xl font-medium text-[#111] max-w-xl mx-auto leading-tight tracking-[-0.035em]">
+            Step into calm, intelligent stock analysis.
           </h2>
-          <p className="text-sm text-slash-fog max-w-xl mx-auto leading-relaxed">
-            Open the full interactive terminal now with real-time equity feeds, machine learning forecasting, and personalized portfolio tracking.
+          <p className="text-sm text-[#7b7b7b] max-w-md mx-auto leading-relaxed">
+            Open the live interactive dashboard with continuous equity feeds, momentum envelopes, and machine learning price targets.
           </p>
-
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
             <button
               onClick={() => navigate('/dashboard')}
-              className="px-8 py-3 rounded-full bg-white text-black hover:bg-slate-200 text-xs font-semibold transition flex items-center gap-2 shadow-lg"
+              className="px-6 py-3 rounded-full bg-[#111] text-white text-[13.5px] font-medium transition-transform duration-250 hover:-translate-y-px flex items-center gap-2 cursor-pointer shadow-sm"
             >
-              <span>Launch Terminal Now</span>
+              <span>Launch Dashboard</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={handleOpenLogin}
-              className="px-6 py-3 rounded-full border border-slash-steel text-xs font-medium text-white hover:border-white transition"
+              className="px-6 py-3 rounded-full bg-transparent border border-[#e8e8e6] text-[13.5px] font-medium text-[#111] hover:bg-[#f0f0ee] transition cursor-pointer"
             >
-              Create Account
+              Sign In
             </button>
           </div>
         </section>
       </main>
 
-      {/* 9. Editorial Landing Footer */}
-      <footer className="mt-20 bg-slash-obsidian border-t border-slash-graphite text-xs text-slash-fog py-12 px-4 lg:px-8">
-        <div className="max-w-[1216px] mx-auto space-y-6">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="font-serif text-2xl font-normal text-white tracking-[0.01em]">
-                StockSense AI
-              </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slash-onyx border border-slash-graphite text-slash-copper">
-                Midnight Vault
-              </span>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-6 text-[11px] text-slash-mist">
-              <a href="#features" className="hover:text-white transition">Features</a>
-              <a href="#ml-pipeline" className="hover:text-white transition">ML Regressors</a>
-              <a href="#technicals" className="hover:text-white transition">Technicals</a>
-              <a href="#faq" className="hover:text-white transition">FAQ</a>
-              <button onClick={() => navigate('/dashboard')} className="hover:text-white transition">Terminal</button>
-            </div>
+      {/* ─────────────────────────────────────────────────────────────
+          4. FOOTER (Landing Page)
+      ───────────────────────────────────────────────────────────── */}
+      <footer className="border-t border-[#e8e8e6] bg-[#f7f7f5] py-12 px-4 text-center text-xs text-[#9a9a9a]">
+        <div className="max-w-4xl mx-auto space-y-4">
+          <div className="flex items-center justify-center gap-2">
+            <StockLogo size={18} />
+            <span className="font-semibold text-sm text-[#111]">StockSense AI</span>
           </div>
-
-          <p className="text-[11px] text-slash-ash leading-relaxed border-t border-slash-graphite/60 pt-4 max-w-4xl">
-            DISCLAIMER: StockSense AI is an educational machine learning and financial engineering laboratory project.
-            Trading in financial instruments involves substantial risk of loss and is not suitable for every investor.
-            All predictions, technical indicators, and qualitative market insights are strictly simulated quantitative projections
-            and do not constitute investment advice or trading signals.
+          <p className="text-[11px] text-[#9a9a9a] max-w-xl mx-auto">
+            Educational quantitative market research application. All indicators and model projections are mathematical demonstrations and do not constitute financial advice.
           </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] text-slash-ash">
-            <div>© {new Date().getFullYear()} StockSense AI — Academic Full-Stack ML Project.</div>
-            <div>Styled in the Slash Midnight Vault & Gilded Ledger aesthetic.</div>
+          <div className="text-[11px] text-[#9a9a9a]">
+            © {new Date().getFullYear()} StockSense AI. All rights reserved.
           </div>
         </div>
       </footer>

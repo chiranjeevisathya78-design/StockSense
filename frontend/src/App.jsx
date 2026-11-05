@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { StockProvider, useStock } from './context/StockContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import Navbar from './components/Navbar';
-import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
 
@@ -28,12 +27,12 @@ function Toast() {
   return (
     <div className="fixed bottom-6 right-6 z-50 animate-bounce pointer-events-none">
       <div
-        className={`px-4 py-2.5 rounded-full shadow-2xl text-xs font-semibold border ${
+        className={`px-4 py-2.5 rounded-full shadow-lg text-xs font-medium border ${
           isSuccess
-            ? 'bg-slash-onyx text-slash-sage border-slash-sage/50'
+            ? 'bg-white text-emerald-700 border-emerald-200'
             : isError
-            ? 'bg-slash-onyx text-slash-rose border-slash-rose/50'
-            : 'bg-slash-onyx text-slash-bone border-slash-copper/50'
+            ? 'bg-white text-rose-600 border-rose-200'
+            : 'bg-white text-[#111] border-[#e8e8e6]'
         }`}
       >
         {toastMessage.message}
@@ -44,15 +43,12 @@ function Toast() {
 
 function TerminalLayout({ children }) {
   return (
-    <div className="min-h-screen bg-slash-obsidian text-slash-bone flex flex-col font-sans">
+    <div className="min-h-screen bg-[#f7f7f5] text-[#7b7b7b] flex flex-col font-sans">
       <Navbar />
-      <div className="flex-1 flex">
-        <Sidebar />
-        <main className="flex-1 min-w-0 overflow-y-auto">
-          {children}
-          <Footer />
-        </main>
-      </div>
+      <main className="flex-1 min-w-0">
+        {children}
+        <Footer />
+      </main>
     </div>
   );
 }
@@ -65,7 +61,7 @@ function AppRoutes() {
       {/* Public Landing Page */}
       <Route path="/" element={<LandingPage />} />
 
-      {/* Internal Quantitative Terminal */}
+      {/* Internal Application Terminal */}
       <Route
         path="/dashboard"
         element={

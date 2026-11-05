@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kindred — Reconnecting Human Creativity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f7f5;--ink:#111111;--mute:#9a9a9a;--sub:#7b7b7b}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+
+/* ── Hero Section ── */
+.hero{position:relative;height:100vh;min-height:660px;overflow:hidden;background:var(--bg)}
+#dots{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* ── Nav ── */
+nav{position:relative;z-index:3;display:flex;align-items:center;justify-content:center;gap:clamp(18px,2.6vw,40px);padding-top:36px;font-size:13.5px}
+.brand{display:flex;align-items:center;gap:8px;margin-right:10px;font-weight:600;font-size:15px;letter-spacing:-.01em;color:var(--ink);text-decoration:none}
+.brand svg{flex-shrink:0}
+nav a.nav-link{color:#3a3a3a;text-decoration:none;transition:color .2s}
+nav a.nav-link:hover{color:#000}
+.sign-in{display:inline-block;background:#111;color:#fff;padding:10px 21px;border-radius:999px;font-weight:500;font-size:13.5px;text-decoration:none;margin-left:10px;transition:transform .25s}
+.sign-in:hover{transform:translateY(-1px)}
+
+/* ── Copy Block ── */
+.copy{position:absolute;left:50%;top:24.5%;transform:translateX(-50%);text-align:center;width:min(92vw,720px);z-index:3}
+.copy h1{font-weight:500;letter-spacing:-.035em;line-height:1.04;font-size:clamp(38px,3.75vw,68px)}
+.copy h1 .line1{display:block;color:var(--mute)}
+.copy h1 .line2{display:block;color:var(--ink)}
+.copy p{margin-top:20px;margin-left:auto;margin-right:auto;max-width:340px;color:var(--sub);font-size:clamp(13px,1.02vw,15.5px);line-height:1.4}
+.cta{display:inline-block;position:relative;margin-top:clamp(34px,3.6vw,52px)}
+.cta a{position:relative;z-index:1;display:inline-block;background:#111;color:#fff;font-size:13.5px;font-weight:500;padding:11px 20px;border-radius:999px;text-decoration:none;transition:transform .3s}
+.cta:hover a{transform:translateY(-1px)}
+.cta::before{content:'';position:absolute;left:10%;right:10%;bottom:-6px;height:16px;border-radius:50%;background:linear-gradient(90deg,#ffcf5a,#7dffa8,#5ad7ff,#9b7bff,#ff6fd8,#ffb36b);filter:blur(9px);opacity:.85;z-index:0;transition:all .3s}
+.cta:hover::before{opacity:1;filter:blur(12px);bottom:-9px}
+
+/* ── Partner Logos ── */
+.logos{position:absolute;bottom:clamp(28px,6vh,64px);left:0;right:0;z-index:3;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:clamp(26px,4.6vw,66px);padding:0 16px;color:#8d8d8d;font-size:clamp(14px,1.18vw,17px);font-weight:500;letter-spacing:-.01em}
+.logo-item{display:flex;align-items:center;gap:7px}
+.logo-item svg{flex-shrink:0}
+
+/* ── Responsive ≤760px ── */
+@media(max-width:760px){
+  nav{justify-content:space-between;padding:22px 18px 0}
+  nav a.nav-link{display:none}
+  .copy{top:20%}
+  .logos{gap:14px 24px;font-size:13px}
+}
+</style>
+</head>
+<body>
+<section class="hero">
+  <canvas id="dots"></canvas>
+
+  <nav>
+    <a href="#" class="brand">
+      <svg width="16" height="18" viewBox="0 0 16 18" fill="currentColor"><path d="M2 0h4v18H2zM7 9c3-1 5-4 6-9h3c-1 5-3 8-6 9 3 1 5 4 6 9h-3c-1-5-3-8-6-9z"/></svg>
+      Kindred
+    </a>
+    <a href="#" class="nav-link">Platform</a>
+    <a href="#" class="nav-link">Marketplace</a>
+    <a href="#" class="nav-link">Creators</a>
+    <a href="#" class="nav-link">Resources</a>
+    <a href="#" class="nav-link">Company</a>
+    <a href="#" class="sign-in">Sign In</a>
+  </nav>
+
+  <div class="copy">
+    <h1>
+      <span class="line1">Reconnecting</span>
+      <span class="line2">Human Creativity.</span>
+    </h1>
+    <p>We're not building another platform. We're building a place where people belong.</p>
+    <div class="cta">
+      <a href="#">Join the circle</a>
+    </div>
+  </div>
+
+  <div class="logos">
+    <span class="logo-item">
+      <svg width="17" height="17" viewBox="0 0 20 20" fill="currentColor"><path d="M3 15c0-7 5-12 14-12-1 9-6 14-13 13l-1 2-2-1z"/></svg>
+      Lumenix
+    </span>
+    <span class="logo-item">
+      <svg width="17" height="17" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l8 4.5v9L10 19l-8-4.5v-9zM10 6l-4 2.3v4.4L10 15l4-2.3V8.3z"/></svg>
+      Velora
+    </span>
+    <span class="logo-item">
+      <svg width="17" height="17" viewBox="0 0 20 20" fill="currentColor"><path d="M1 5q4.5-3 9 0t9 0v3q-4.5 3-9 0t-9 0zm0 7q4.5-3 9 0t9 0v3q-4.5 3-9 0t-9 0z"/></svg>
+      Nimbus
+    </span>
+    <span class="logo-item">
+      <svg width="17" height="17" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1a9 9 0 110 18 9 9 0 010-18zm0 3a6 6 0 100 12 6 6 0 000-12zm0 3a3 3 0 110 6 3 3 0 010-6z"/></svg>
+      Quanta
+    </span>
+    <span class="logo-item">
+      <svg width="17" height="17" viewBox="0 0 20 20" fill="currentColor"><path d="M1 17L7 6l3 5 3-7 6 13z"/></svg>
+      Solstice
+    </span>
+    <span class="logo-item">
+      <svg width="17" height="17" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l9 4-9 4-9-4zm-9 8l9 4 9-4v3l-9 4-9-4zm0 5l9 4 9-4v2l-9 4-9-4z"/></svg>
+      Parallax
+    </span>
+  </div>
+</section>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ── Constants ── */
+  const LOOP     = 20;
+  const DOT_CLR  = '#0d0d0d';
+  const LEVELS   = [0, .26, .52, .78, 1];
+  const SHEET_URL = 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261030_025250_100df7b8-31fd-4614-aa4a-c1b7d5b6b273.png&w=1600&q=85';
+
+  /* Source rects [x, y, w, h] as fractions of sheet */
+  const SRC = {
+    LA: [0,    .06, .47, .40],
+    RA: [.53,  .06, .47, .40],
+    LB: [0,    .55, .47, .40],
+    RB: [.53,  .55, .47, .40]
+  };
+
+  /* ── Canvas setup ── */
+  const canvas = document.getElementById('dots');
+  const ctx    = canvas.getContext('2d');
+
+  let W, H, DPR, step, rowStep, cols, rows, R;
+  let seeds; // Float32Array[cols * rows]
+
+  /* ── Sheet & tiles ── */
+  const sheet    = new Image();
+  sheet.crossOrigin = 'anonymous';
+  let tiles      = {}; // LA, RA, LB, RB → offscreen canvas
+  let sheetReady = false;
+
+  /* ── Field canvases (tiny, 1px per dot) ── */
+  let fA, fACtx, fB, fBCtx;
+
+  /* ── Hash ── */
+  function hash(a, b){
+    return ((Math.sin(a * 127.1 + b * 311.7) * 43758.5453) % 1 + 1) % 1;
+  }
+
+  /* ── Smoothstep ── */
+  function smooth(edge0, edge1, x){
+    const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+    return t * t * (3 - 2 * t);
+  }
+
+  /* ── mixAt ── */
+  function mixAt(t, on, off, dur){
+    return smooth(on, on + dur, t) * (1 - smooth(off, off + dur, t));
+  }
+
+  /* ── Build tiles from loaded sheet ── */
+  function buildTiles(){
+    const sw = sheet.naturalWidth;
+    const sh = sheet.naturalHeight;
+    const TILE_W = 420;
+
+    for(const key in SRC){
+      const [fx, fy, fw, fh] = SRC[key];
+      const sx = fx * sw, sy = fy * sh, sW = fw * sw, sH = fh * sh;
+      const aspect = sH / sW;
+      const tw = TILE_W, th = Math.round(tw * aspect);
+      const c = document.createElement('canvas');
+      c.width = tw; c.height = th;
+      const x = c.getContext('2d');
+      x.imageSmoothingEnabled = true;
+      x.imageSmoothingQuality = 'high';
+      x.drawImage(sheet, sx, sy, sW, sH, 0, 0, tw, th);
+      tiles[key] = c;
+    }
+    sheetReady = true;
+  }
+
+  /* ── Resize ── */
+  function resize(){
+    W = canvas.clientWidth;
+    H = canvas.clientHeight;
+    DPR = Math.min(2, devicePixelRatio || 1);
+    canvas.width  = W * DPR;
+    canvas.height = H * DPR;
+
+    step    = Math.max(5, W / 205);
+    rowStep = step * 2.05;
+    cols    = Math.ceil(W / step);
+    rows    = Math.ceil(H / rowStep);
+    R       = step * .46;
+
+    /* Seeds */
+    seeds = new Float32Array(cols * rows);
+    for(let j = 0; j < rows; j++){
+      for(let i = 0; i < cols; i++){
+        seeds[j * cols + i] = .55 * hash(i, j) + .45 * hash(j * 3.1, 7.7);
+      }
+    }
+
+    /* Field canvases */
+    fA = document.createElement('canvas');
+    fA.width = cols; fA.height = rows;
+    fACtx = fA.getContext('2d', {willReadFrequently: true});
+
+    fB = document.createElement('canvas');
+    fB.width = cols; fB.height = rows;
+    fBCtx = fB.getContext('2d', {willReadFrequently: true});
+  }
+
+  /* ── Draw a hand tile into a field canvas ── */
+  function drawHandToField(fieldCtx, tile, isLeft, t, ph){
+    const a      = 2 * Math.PI * t / LOOP;
+    const portrait = H > W;
+    const hw     = portrait ? W * .66 : W * .53;
+    const hAspect = (.40 * 1520) / (.47 * 2688);
+    const hh     = hw * hAspect;
+    const cy     = portrait ? H * .66 : H * .54;
+
+    const reach = (.035 * Math.sin(a + ph) + .012 * Math.sin(2 * a + 1.3 + ph)) * W;
+    const sc    = 1 + .07 * Math.sin(a + .9 + ph);
+    const rot   = (isLeft ? 1 : -1) * .045 * Math.sin(a + 2.1 + ph);
+
+    let x;
+    if(isLeft){
+      x = reach - W * .045;
+    } else {
+      x = W - hw + W * .045 - reach;
+    }
+
+    const pivotX = isLeft ? 0 : hw;
+    const pivotY = hh / 2;
+
+    const sx = cols / W;
+    const sy = rows / H;
+
+    fieldCtx.save();
+    fieldCtx.scale(sx, sy);
+    fieldCtx.translate(x + pivotX, cy - hh / 2 + pivotY);
+    fieldCtx.rotate(rot);
+    fieldCtx.scale(sc, sc);
+    fieldCtx.translate(-pivotX, -pivotY);
+    fieldCtx.drawImage(tile, 0, 0, hw, hh);
+    fieldCtx.restore();
+  }
+
+  /* ── Render ── */
+  function render(rawT){
+    if(!sheetReady) return;
+    const t = ((rawT % LOOP) + LOOP) % LOOP;
+
+    /* Fill fields white, draw hands */
+    fACtx.fillStyle = '#ffffff';
+    fACtx.fillRect(0, 0, cols, rows);
+    fBCtx.fillStyle = '#ffffff';
+    fBCtx.fillRect(0, 0, cols, rows);
+
+    drawHandToField(fACtx, tiles.LA, true,  t, 0);
+    drawHandToField(fACtx, tiles.RA, false, t, Math.PI);
+    drawHandToField(fBCtx, tiles.LB, true,  t, 0);
+    drawHandToField(fBCtx, tiles.RB, false, t, Math.PI);
+
+    const dataA = fACtx.getImageData(0, 0, cols, rows).data;
+    const dataB = fBCtx.getImageData(0, 0, cols, rows).data;
+
+    /* Dissolve mix values */
+    const mL = mixAt(t, 6.2, 14.6, 1.6);
+    const mR = mixAt(t, 2.4, 10.4, 1.6);
+    const halfCols = cols / 2;
+
+    const tick = Math.floor(t * 7);
+
+    const portrait = H > W;
+    const quietW = portrait ? .44 : .2;
+    const quietCY = portrait ? .33 : .385;
+
+    /* Clear visible canvas */
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = DOT_CLR;
+
+    for(let j = 0; j < rows; j++){
+      /* Row glitch */
+      let rowShift = 0;
+      if(hash(j, tick) > .965){
+        rowShift = Math.round((hash(tick, j) - .5) * 8);
+      }
+
+      for(let i = 0; i < cols; i++){
+        const idx  = j * cols + i;
+        const seed = seeds[idx];
+
+        /* Pick pose A or B */
+        const m = i < halfCols ? mL : mR;
+        const useB = seed < m;
+
+        /* Sample from field */
+        const si = Math.max(0, Math.min(cols - 1, i - rowShift));
+        const pxIdx = (j * cols + si) * 4;
+        const data = useB ? dataB : dataA;
+        const lum = data[pxIdx] / 255;
+
+        /* Luminance → value */
+        let v = Math.max(0, Math.min(1, (1 - lum - .16) / .42));
+
+        /* Dissolve front flicker */
+        if(m > 0.001 && m < 0.999){
+          const dist = Math.abs(seed - m);
+          if(dist < .12){
+            v *= dist / .12;
+            if(hash(i + tick, j) <= .4) v *= .3;
+          }
+        }
+
+        /* Shimmer */
+        v *= .86 + .14 * Math.sin(t * 3.2 + seed * 40);
+
+        /* Centre fade (fingertip fade near CTA) */
+        const cx = Math.abs((i + .5) / cols - .5);
+        v *= smooth(.035, .11, cx);
+
+        /* Copy quiet zone */
+        const ex = cx / quietW;
+        const ey = ((j + .5) * rowStep / H - quietCY) / .085;
+        v *= smooth(.85, 1.25, Math.hypot(ex, ey));
+
+        if(v < .01) continue;
+
+        /* Quantise to 5 levels */
+        let level = 0;
+        for(let k = LEVELS.length - 1; k >= 1; k--){
+          if(v >= LEVELS[k] - .13){
+            level = LEVELS[k];
+            break;
+          }
+        }
+        if(level === 0) continue;
+
+        /* Dot radius */
+        const r = level <= .26 ? R * .38 : R * level;
+
+        /* Draw dot */
+        const dotX = (i + .5) * step;
+        const dotY = (j + .5) * rowStep;
+        ctx.beginPath();
+        ctx.arc(dotX, dotY, r, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+    }
+  }
+
+  /* ── Animation loop ── */
+  let t0 = null;
+  function frame(now){
+    if(t0 === null) t0 = now;
+    render((now - t0) / 1000);
+    requestAnimationFrame(frame);
+  }
+
+  /* ── Expose for recorder ── */
+  window.__render = render;
+
+  /* ── Init ── */
+  window.addEventListener('resize', resize);
+  resize();
+
+  sheet.onload = function(){
+    buildTiles();
+    requestAnimationFrame(frame);
+  };
+  sheet.onerror = function(){
+    console.error('Failed to load hand sheet image.');
+  };
+  sheet.src = SHEET_URL;
+})();
+</script>
+</body>
+</html>

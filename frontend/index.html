@@ -6,7 +6,7 @@
     <title>StockSense AI — Intelligent Stock Market Analysis & Prediction</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
       window.addEventListener('error', function(e) {
         console.error('Window error detected:', e);
@@ -14,14 +14,14 @@
         if (!errBox) {
           errBox = document.createElement('div');
           errBox.id = 'debug-error-box';
-          errBox.style.cssText = 'position:fixed;bottom:20px;left:20px;right:20px;background:#18181b;color:#f87171;border:1px solid #ef4444;padding:16px;border-radius:10px;font-family:monospace;font-size:12px;z-index:999999;box-shadow:0 10px 25px rgba(0,0,0,0.5);';
+          errBox.style.cssText = 'position:fixed;bottom:20px;left:20px;right:20px;background:#ffffff;color:#ef4444;border:1px solid #e8e8e6;padding:16px;border-radius:12px;font-family:sans-serif;font-size:12px;z-index:999999;box-shadow:0 10px 25px rgba(0,0,0,0.1);';
           document.body.appendChild(errBox);
         }
-        errBox.innerHTML = '<strong>Client Script Error:</strong> ' + (e.message || 'Unknown script error') + '<br><small>' + (e.filename || '') + ':' + (e.lineno || '') + '</small><br><button onclick="window.location.reload()" style="margin-top:8px;padding:4px 12px;background:#fff;color:#000;border:none;border-radius:999px;cursor:pointer;font-weight:bold;">Reload Page</button>';
+        errBox.innerHTML = '<strong>Client Script Error:</strong> ' + (e.message || 'Unknown script error') + '<br><small>' + (e.filename || '') + ':' + (e.lineno || '') + '</small><br><button onclick="window.location.reload()" style="margin-top:8px;padding:4px 12px;background:#111;color:#fff;border:none;border-radius:999px;cursor:pointer;font-weight:bold;">Reload Page</button>';
       });
     </script>
   </head>
-  <body class="bg-[#08080a] text-[#e2e3e9] selection:bg-[#cc9166]/30 selection:text-white">
+  <body class="bg-[#f7f7f5] text-[#111111] selection:bg-[#111111]/10 selection:text-[#111111] antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

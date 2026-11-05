@@ -6,7 +6,8 @@ import {
   TrendingDown,
   Activity,
   Cpu,
-  Sliders
+  Sliders,
+  CheckCircle2
 } from 'lucide-react';
 import { stockApi, formatCurrency } from '../services/api';
 import { useStock } from '../context/StockContext';
@@ -45,7 +46,7 @@ export default function MarketInsights() {
 
   if (loading) {
     return (
-      <div className="p-6 space-y-6 max-w-[1216px] mx-auto">
+      <div className="p-6 space-y-6 max-w-6xl mx-auto">
         <LoadingSkeleton type="card" count={3} />
         <LoadingSkeleton type="table" count={4} />
       </div>
@@ -54,7 +55,7 @@ export default function MarketInsights() {
 
   if (error || !insights) {
     return (
-      <div className="p-6 max-w-[1216px] mx-auto">
+      <div className="p-6 max-w-6xl mx-auto">
         <ErrorMessage message={error} onRetry={fetchInsights} />
       </div>
     );
@@ -63,116 +64,94 @@ export default function MarketInsights() {
   const getSentimentPill = (sent) => {
     if (sent.includes('Bullish') || sent.includes('Positive')) {
       return (
-        <span className="text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-slash-sageBg border border-slash-sage/30 text-slash-sage">
+        <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
           {sent}
         </span>
       );
     }
-    if (sent.includes('Bearish') || sent.includes('Negative') || sent.includes('Caution')) {
+    if (sent.includes('Bearish') || sent.includes('Negative')) {
       return (
-        <span className="text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-slash-roseBg border border-slash-rose/30 text-slash-rose">
+        <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200/60">
           {sent}
         </span>
       );
     }
     return (
-      <span className="text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-slash-carbon border border-slash-graphite text-slash-copper">
+      <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-[#f0f0ee] text-[#4b5563]">
         {sent}
       </span>
     );
   };
 
   return (
-    <div className="p-4 lg:p-8 space-y-10 max-w-[1216px] mx-auto">
+    <div className="p-4 lg:p-8 space-y-8 max-w-6xl mx-auto bg-[#f7f7f5] text-[#7b7b7b] font-sans">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slash-graphite">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#e8e8e6]">
         <div>
-          <div className="text-[13px] font-semibold text-slash-copper uppercase tracking-[-0.02em] mb-1">
-            Deterministic Natural Language Synthesis
+          <div className="text-xs uppercase tracking-wider text-[#9a9a9a] font-medium mb-1">
+            Deterministic Natural Language Processing
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-white tracking-[0.01em]">
-            Market Insights — <span className="text-slash-copper">{insights.symbol}</span>
+          <h1 className="text-3xl sm:text-4xl font-medium text-[#111] tracking-[-0.03em]">
+            Executive Market Commentary — {activeSymbol}
           </h1>
-          <p className="text-sm text-slash-fog mt-1">{insights.name}</p>
+          <p className="text-sm text-[#7b7b7b] mt-1">
+            Algorithmic syntheses generated dynamically from multi-dimensional quantitative signals
+          </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           <Link
-            to={`/predictions/${encodeURIComponent(insights.symbol)}`}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-slash-onyx hover:bg-slash-carbon border border-slash-steel text-xs font-medium text-white transition"
+            to={`/technical/${encodeURIComponent(activeSymbol)}`}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-[#f0f0ee] border border-[#e8e8e6] text-xs font-medium text-[#111] transition shadow-xs"
           >
-            <Cpu className="w-3.5 h-3.5 text-slash-copper" />
-            <span>ML Models</span>
+            <Sliders className="w-3.5 h-3.5 text-[#7b7b7b]" />
+            <span>Technicals</span>
           </Link>
           <Link
-            to={`/technical/${encodeURIComponent(insights.symbol)}`}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-slash-onyx hover:bg-slash-carbon border border-slash-graphite text-xs font-medium text-white transition"
+            to={`/predictions/${encodeURIComponent(activeSymbol)}`}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#111] hover:bg-black text-white text-xs font-medium transition shadow-xs"
           >
-            <Sliders className="w-3.5 h-3.5 text-slash-fog" />
-            <span>Technicals</span>
+            <Cpu className="w-3.5 h-3.5" />
+            <span>AI Targets</span>
           </Link>
         </div>
       </div>
 
       <DisclaimerBanner compact />
 
-      {/* Executive Summary Editorial Card */}
-      <div className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-8 lg:p-10 space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-[13px] font-semibold text-slash-copper uppercase tracking-[-0.02em]">
-              Editorial Consensus
+      {/* Primary Narrative Summary Card (Kindred White Card) */}
+      <div className="rounded-2xl bg-white border border-[#e8e8e6] p-6 sm:p-10 shadow-xs space-y-6">
+        <div className="flex items-center justify-between pb-4 border-b border-[#e8e8e6]">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
+              <Sparkles className="w-4 h-4" />
             </div>
-            <h2 className="font-serif text-2xl font-normal text-white tracking-[0.01em] mt-0.5">
-              Market Regime Summary
-            </h2>
+            <h3 className="text-lg font-medium text-[#111]">
+              Executive Synthesis Summary
+            </h3>
           </div>
-          {getSentimentPill(insights.overall_sentiment)}
+          {getSentimentPill(insights.sentiment || 'Neutral Stance')}
         </div>
 
-        <p className="text-base text-slash-bone leading-relaxed max-w-3xl font-light">
-          {insights.summary_paragraph}
+        <p className="text-base text-[#111] leading-relaxed font-normal">
+          {insights.summary}
         </p>
 
-        <div className="pt-4 border-t border-slash-graphite flex items-center justify-between text-xs text-slash-fog">
-          <span>Settlement Reference: {formatCurrency(insights.current_price, insights.currency)}</span>
-          <span className="font-mono text-slash-ash">Engine: Deterministic Rule Synthesis v1.0</span>
-        </div>
-      </div>
-
-      {/* Quantitative ML Forecast Narrative */}
-      <div className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-6 lg:p-8 space-y-3">
-        <div className="text-[13px] font-semibold text-slash-copper uppercase tracking-[-0.02em]">
-          Algorithmic Outlook
-        </div>
-        <h3 className="font-serif text-xl font-normal text-white tracking-[0.01em]">
-          Machine Learning Forecast Perspective
-        </h3>
-        <p className="text-sm text-slash-fog leading-relaxed p-4 rounded-[8px] bg-slash-carbon border border-slash-graphite">
-          {insights.ml_forecast_perspective}
-        </p>
-      </div>
-
-      {/* Categorized Breakdown */}
-      <div className="space-y-4">
-        <h2 className="font-serif text-2xl font-normal text-white tracking-[0.01em]">
-          Indicator Signal Breakdown
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {insights.bullet_insights.map((item, idx) => (
-            <div
-              key={idx}
-              className="rounded-[10px] bg-slash-onyx border border-slash-graphite p-6 space-y-3 hover:border-slash-slate transition"
-            >
-              <div className="flex items-center justify-between">
-                <h4 className="font-medium text-sm text-white">{item.category}</h4>
-                {getSentimentPill(item.sentiment)}
-              </div>
-              <p className="text-xs text-slash-fog leading-relaxed">{item.detail}</p>
+        {insights.key_points && insights.key_points.length > 0 && (
+          <div className="pt-4 border-t border-[#e8e8e6] space-y-2.5">
+            <h4 className="text-xs uppercase tracking-wider font-semibold text-[#9a9a9a]">
+              Key Factor Observations
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+              {insights.key_points.map((pt, idx) => (
+                <div key={idx} className="p-3.5 rounded-xl bg-[#fafaf8] border border-[#e8e8e6] flex items-start gap-2.5 text-xs text-[#4b5563]">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <span className="leading-relaxed">{pt}</span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -19,21 +19,15 @@ export default function StockCard({ stock }) {
   return (
     <div
       onClick={handleClick}
-      className="group relative rounded-[10px] bg-slash-onyx hover:bg-slash-carbon border border-slash-graphite hover:border-slash-slate transition-all duration-200 p-5 cursor-pointer flex flex-col justify-between"
+      className="group relative rounded-2xl bg-white hover:bg-[#fafaf8] border border-[#e8e8e6] hover:border-[#d4d4d2] shadow-xs hover:shadow-md transition-all duration-200 p-6 cursor-pointer flex flex-col justify-between"
     >
       <div>
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <span className="font-mono font-bold text-sm text-white group-hover:text-slash-copper transition">
+            <span className="font-semibold text-sm text-[#111] group-hover:opacity-70 transition">
               {stock.symbol}
             </span>
-            <span
-              className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${
-                stock.market === 'IN'
-                  ? 'border-slash-copper/40 text-slash-copper bg-slash-copperGlow'
-                  : 'border-slash-steel text-slash-silver bg-slash-carbon'
-              }`}
-            >
+            <span className="text-[10px] uppercase font-medium px-2 py-0.5 rounded-full bg-[#f0f0ee] text-[#7b7b7b]">
               {stock.market === 'IN' ? 'NSE/BSE (₹)' : 'US ($)'}
             </span>
           </div>
@@ -45,39 +39,39 @@ export default function StockCard({ stock }) {
             }}
             className={`p-1.5 rounded-full border transition ${
               inWatchlist
-                ? 'bg-slash-carbon text-slash-copper border-slash-copper/40'
-                : 'bg-transparent text-slash-fog border-slash-graphite hover:text-white'
+                ? 'bg-[#111] text-white border-[#111]'
+                : 'bg-white text-[#9a9a9a] border-[#e8e8e6] hover:text-[#111] hover:bg-[#f0f0ee]'
             }`}
             title={inWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}
           >
-            <Bookmark className="w-3 h-3 fill-current" />
+            <Bookmark className="w-3.5 h-3.5 fill-current" />
           </button>
         </div>
 
-        <p className="text-xs text-slash-fog truncate max-w-[220px] mb-4">
+        <p className="text-xs text-[#7b7b7b] truncate max-w-[220px] mb-4">
           {stock.name}
         </p>
       </div>
 
-      <div className="pt-3 border-t border-slash-graphite/60 flex items-end justify-between">
+      <div className="pt-3 border-t border-[#e8e8e6] flex items-end justify-between">
         <div>
-          <div className="text-[11px] text-slash-ash mb-0.5 uppercase tracking-wider font-medium">Last Settlement</div>
-          <div className="font-serif text-xl font-normal text-white tracking-[0.01em]">
+          <div className="text-[10px] text-[#9a9a9a] mb-0.5 uppercase tracking-wider font-medium">Last Close</div>
+          <div className="font-semibold text-lg text-[#111]">
             {formatCurrency(stock.price, stock.currency)}
           </div>
         </div>
 
         <div
-          className={`flex items-center gap-1 font-mono text-xs font-medium px-2.5 py-0.5 rounded-full border ${
+          className={`flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${
             isPositive
-              ? 'text-slash-sage bg-slash-sageBg border-slash-sage/30'
-              : 'text-slash-rose bg-slash-roseBg border-slash-rose/30'
+              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
+              : 'bg-rose-50 text-rose-700 border border-rose-200/60'
           }`}
         >
           {isPositive ? (
-            <TrendingUp className="w-3 h-3" />
+            <TrendingUp className="w-3.5 h-3.5 shrink-0" />
           ) : (
-            <TrendingDown className="w-3 h-3" />
+            <TrendingDown className="w-3.5 h-3.5 shrink-0" />
           )}
           <span>{formatPercent(stock.percent_change)}</span>
         </div>
