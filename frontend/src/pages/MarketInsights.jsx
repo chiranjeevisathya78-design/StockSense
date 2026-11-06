@@ -84,17 +84,17 @@ export default function MarketInsights() {
   };
 
   return (
-    <div className="p-4 lg:p-8 space-y-8 max-w-6xl mx-auto bg-[#f7f7f5] text-[#7b7b7b] font-sans">
+    <div className="space-y-8 font-sans text-[#636366]">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#e8e8e6]">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black/5">
         <div>
-          <div className="text-xs uppercase tracking-wider text-[#9a9a9a] font-medium mb-1">
+          <div className="text-xs uppercase tracking-wider text-[#8e8e93] font-medium mb-1">
             Deterministic Natural Language Processing
           </div>
-          <h1 className="text-3xl sm:text-4xl font-medium text-[#111] tracking-[-0.03em]">
-            Executive Market Commentary — {activeSymbol}
+          <h1 className="text-3xl sm:text-4xl font-semibold text-[#0f1115] tracking-tight">
+            Executive Market Commentary — <span className="text-emerald-700">{activeSymbol}</span>
           </h1>
-          <p className="text-sm text-[#7b7b7b] mt-1">
+          <p className="text-sm text-[#8e8e93] mt-1">
             Algorithmic syntheses generated dynamically from multi-dimensional quantitative signals
           </p>
         </div>
@@ -102,14 +102,14 @@ export default function MarketInsights() {
         <div className="flex items-center gap-2">
           <Link
             to={`/technical/${encodeURIComponent(activeSymbol)}`}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-[#f0f0ee] border border-[#e8e8e6] text-xs font-medium text-[#111] transition shadow-xs"
+            className="spatial-pill flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[#0f1115] transition"
           >
-            <Sliders className="w-3.5 h-3.5 text-[#7b7b7b]" />
+            <Sliders className="w-3.5 h-3.5 text-[#8e8e93]" />
             <span>Technicals</span>
           </Link>
           <Link
             to={`/predictions/${encodeURIComponent(activeSymbol)}`}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#111] hover:bg-black text-white text-xs font-medium transition shadow-xs"
+            className="liquid-glass-btn flex items-center gap-1.5 px-5 py-2 text-xs font-semibold transition"
           >
             <Cpu className="w-3.5 h-3.5" />
             <span>AI Targets</span>
@@ -119,8 +119,8 @@ export default function MarketInsights() {
 
       <DisclaimerBanner compact />
 
-      {/* Primary Narrative Summary Card (Kindred White Card) */}
-      <div className="rounded-2xl bg-white border border-[#e8e8e6] p-6 sm:p-10 shadow-xs space-y-6">
+      {/* Primary Narrative Summary Card (Liquid Glass Panel) */}
+      <div className="liquid-glass-panel p-6 sm:p-10 space-y-6">
         <div className="flex items-center justify-between pb-4 border-b border-[#e8e8e6]">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">

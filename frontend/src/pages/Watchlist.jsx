@@ -41,26 +41,26 @@ export default function Watchlist() {
   };
 
   return (
-    <div className="p-4 lg:p-8 space-y-8 max-w-6xl mx-auto bg-[#f7f7f5] text-[#7b7b7b] font-sans">
+    <div className="space-y-8 font-sans text-[#636366]">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#e8e8e6]">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black/5">
         <div>
-          <div className="text-xs uppercase tracking-wider text-[#9a9a9a] font-medium mb-1">
+          <div className="text-xs uppercase tracking-wider text-[#8e8e93] font-medium mb-1">
             Personal Portfolio Ledger
           </div>
-          <h1 className="text-3xl sm:text-4xl font-medium text-[#111] tracking-[-0.03em]">
+          <h1 className="text-3xl sm:text-4xl font-semibold text-[#0f1115] tracking-tight">
             Watchlist Ledger
           </h1>
-          <p className="text-sm text-[#7b7b7b] mt-1">
+          <p className="text-sm text-[#8e8e93] mt-1">
             Track live prices, percentage shifts, and trigger predictive machine learning for saved securities.
           </p>
         </div>
 
         {/* Persistence Status */}
-        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#e8e8e6] text-xs shadow-xs">
+        <div className="spatial-pill flex items-center gap-2 px-4 py-2 text-xs">
           <Database className="w-3.5 h-3.5 text-cyan-600" />
-          <span className="text-[#9a9a9a]">Storage:</span>
-          <span className="font-medium text-[#111]">
+          <span className="text-[#8e8e93]">Storage:</span>
+          <span className="font-semibold text-[#0f1115]">
             {isWatchlistDemoMode ? 'Demo In-Memory Mode' : 'MongoDB Persistence'}
           </span>
         </div>
@@ -69,22 +69,22 @@ export default function Watchlist() {
       <DisclaimerBanner compact />
 
       {/* Manual Quick Add Form */}
-      <div className="p-6 rounded-2xl bg-white border border-[#e8e8e6] shadow-xs">
+      <div className="liquid-glass-panel p-6">
         <form onSubmit={handleAddSubmit} className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-[#9a9a9a] absolute left-4 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-[#8e8e93] absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Add symbol to watchlist (e.g. RELIANCE.NS, TSLA, AAPL)..."
               value={inputSymbol}
               onChange={(e) => setInputSymbol(e.target.value.toUpperCase())}
-              className="w-full bg-[#f7f7f5] border border-[#e8e8e6] rounded-full pl-11 pr-4 py-2.5 text-sm text-[#111] placeholder-[#9a9a9a] focus:outline-none focus:border-[#111]/30 transition"
+              className="w-full neo-skeuo-inset pl-11 pr-4 py-2.5 text-sm text-[#0f1115] placeholder-[#8e8e93] focus:outline-none transition"
             />
           </div>
           <button
             type="submit"
             disabled={submitting || !inputSymbol.trim()}
-            className="px-6 py-2.5 rounded-full bg-[#111] hover:bg-black text-white text-xs font-medium transition flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs"
+            className="liquid-glass-btn px-6 py-2.5 text-xs font-semibold flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add to Watchlist</span>
@@ -94,17 +94,17 @@ export default function Watchlist() {
 
       {/* Watchlist Table / Empty State */}
       {watchlist.length === 0 ? (
-        <div className="p-12 rounded-2xl bg-white border border-[#e8e8e6] text-center space-y-4 shadow-xs">
-          <div className="w-12 h-12 rounded-full bg-[#f0f0ee] text-[#9a9a9a] flex items-center justify-center mx-auto">
+        <div className="liquid-glass-panel p-12 text-center space-y-4">
+          <div className="w-12 h-12 rounded-full bg-black/5 text-[#8e8e93] flex items-center justify-center mx-auto">
             <Bookmark className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-medium text-[#111]">Your Watchlist is Empty</h3>
-          <p className="text-xs text-[#7b7b7b] max-w-sm mx-auto">
+          <h3 className="text-lg font-semibold text-[#0f1115]">Your Watchlist is Empty</h3>
+          <p className="text-xs text-[#8e8e93] max-w-sm mx-auto">
             Explore active NSE and US equities and click the bookmark icon to monitor prices and trigger predictions here.
           </p>
           <button
             onClick={() => navigate('/explore')}
-            className="px-5 py-2.5 rounded-full bg-[#111] text-white text-xs font-medium hover:bg-black transition shadow-xs cursor-pointer"
+            className="liquid-glass-btn px-5 py-2.5 text-xs font-semibold cursor-pointer"
           >
             Browse Market Universe
           </button>

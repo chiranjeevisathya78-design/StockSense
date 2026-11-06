@@ -82,79 +82,79 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-8 max-w-6xl mx-auto font-sans bg-[#f7f7f5] text-[#7b7b7b]">
+    <div className="space-y-8 font-sans text-[#636366]">
       {/* 1. Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 pb-6 border-b border-[#e8e8e6]">
+      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 pb-6 border-b border-black/5">
         <div>
-          <div className="text-xs uppercase tracking-wider text-[#9a9a9a] font-medium mb-1 flex items-center gap-2">
+          <div className="text-xs uppercase tracking-wider text-[#8e8e93] font-medium mb-1 flex items-center gap-2">
             <span>Market Intelligence Ledger</span>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
           </div>
-          <h1 className="text-3xl sm:text-4xl font-medium text-[#111] tracking-[-0.03em]">
+          <h1 className="text-3xl sm:text-4xl font-semibold text-[#0f1115] tracking-tight">
             Market Analysis & Forecasting
           </h1>
-          <p className="text-sm text-[#7b7b7b] mt-1 leading-relaxed">
+          <p className="text-sm text-[#8e8e93] mt-1 leading-relaxed">
             Continuous equity data feeds, mathematical momentum envelopes, and machine learning models.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-[#e8e8e6] text-xs text-[#7b7b7b] self-start sm:self-auto shadow-xs">
+        <div className="spatial-pill flex items-center gap-2 px-3.5 py-1.5 text-xs text-[#636366] self-start sm:self-auto">
           <Clock className="w-3.5 h-3.5 text-cyan-600" />
           <span>Cutoff: {overview.market_timestamp ? new Date(overview.market_timestamp).toLocaleDateString() : 'Active'}</span>
         </div>
       </div>
 
       {/* 2. Notice Disclaimer Banner */}
-      <div className="p-4 rounded-2xl bg-white border border-[#e8e8e6] text-xs text-[#7b7b7b] flex items-center gap-2.5 shadow-xs">
+      <div className="liquid-glass-panel p-4 text-xs text-[#636366] flex items-center gap-2.5">
         <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
         <span>
-          <strong className="text-[#111] font-medium">Notice:</strong> Quantitative model simulations for research purposes only. Projections do not constitute financial advice.
+          <strong className="text-[#0f1115] font-semibold">Notice:</strong> Quantitative model simulations for research purposes only. Projections do not constitute financial advice.
         </span>
       </div>
 
-      {/* 3. Four Core Metric Cards (Kindred White Cards) */}
+      {/* 3. Four Core Metric Cards (Glass-Neo-Skeuomorphic Panels) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-2xl bg-white border border-[#e8e8e6] shadow-xs space-y-1">
-          <div className="text-[11px] font-medium uppercase tracking-wider text-[#9a9a9a]">Tracked Assets</div>
-          <div className="text-2xl sm:text-3xl font-medium text-[#111]">
+        <div className="liquid-glass-panel liquid-glass-hover p-6 space-y-1">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-[#8e8e93]">Tracked Assets</div>
+          <div className="text-2xl sm:text-3xl font-semibold text-[#0f1115]">
             20+ Equities
           </div>
-          <div className="text-xs text-[#9a9a9a]">NSE, BSE, NASDAQ, NYSE</div>
+          <div className="text-xs text-[#8e8e93]">NSE, BSE, NASDAQ, NYSE</div>
         </div>
 
-        <div className="p-6 rounded-2xl bg-white border border-[#e8e8e6] shadow-xs space-y-1">
-          <div className="text-[11px] font-medium uppercase tracking-wider text-[#9a9a9a]">ML Regressors</div>
-          <div className="text-2xl sm:text-3xl font-medium text-[#111]">
+        <div className="liquid-glass-panel liquid-glass-hover p-6 space-y-1">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-[#8e8e93]">ML Regressors</div>
+          <div className="text-2xl sm:text-3xl font-semibold text-[#0f1115]">
             Linear & RF
           </div>
-          <div className="text-xs text-emerald-600 font-medium">Chronological 80/20 Split</div>
+          <div className="text-xs text-emerald-600 font-semibold">Chronological 80/20 Split</div>
         </div>
 
-        <div className="p-6 rounded-2xl bg-white border border-[#e8e8e6] shadow-xs space-y-1">
-          <div className="text-[11px] font-medium uppercase tracking-wider text-[#9a9a9a]">Indicators</div>
-          <div className="text-2xl sm:text-3xl font-medium text-[#111]">
+        <div className="liquid-glass-panel liquid-glass-hover p-6 space-y-1">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-[#8e8e93]">Indicators</div>
+          <div className="text-2xl sm:text-3xl font-semibold text-[#0f1115]">
             8 Algorithms
           </div>
-          <div className="text-xs text-[#9a9a9a]">RSI, MACD, Bollinger, SMAs</div>
+          <div className="text-xs text-[#8e8e93]">RSI, MACD, Bollinger, SMAs</div>
         </div>
 
-        <div className="p-6 rounded-2xl bg-white border border-[#e8e8e6] shadow-xs space-y-1">
-          <div className="text-[11px] font-medium uppercase tracking-wider text-[#9a9a9a]">Watchlist Ledger</div>
-          <div className="text-2xl sm:text-3xl font-medium text-[#111]">
+        <div className="liquid-glass-panel liquid-glass-hover p-6 space-y-1">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-[#8e8e93]">Watchlist Ledger</div>
+          <div className="text-2xl sm:text-3xl font-semibold text-[#0f1115]">
             {watchlist.length} Securities
           </div>
-          <div className="text-xs text-cyan-600 font-medium">Persistent Storage</div>
+          <div className="text-xs text-cyan-600 font-semibold">Persistent Storage</div>
         </div>
       </div>
 
-      {/* 4. Benchmark Chart Card (White Card with Kindred Styling) */}
-      <div className="p-6 sm:p-8 rounded-2xl bg-white border border-[#e8e8e6] shadow-xs space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#e8e8e6]">
+      {/* 4. Benchmark Chart Card */}
+      <div className="liquid-glass-panel p-6 sm:p-8 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-black/5">
           <div>
-            <div className="text-[11px] font-medium uppercase tracking-wider text-cyan-700">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-cyan-700">
               Price Trajectory
             </div>
-            <h2 className="text-2xl font-medium text-[#111] mt-0.5">
+            <h2 className="text-2xl font-semibold text-[#0f1115] mt-0.5">
               6-Month Settlement Trend for {selectedBenchmark}
             </h2>
           </div>
@@ -170,10 +170,10 @@ export default function Dashboard() {
               <button
                 key={b.symbol}
                 onClick={() => setSelectedBenchmark(b.symbol)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer ${
                   selectedBenchmark === b.symbol
-                    ? 'bg-[#111] text-white shadow-xs'
-                    : 'bg-[#f0f0ee] text-[#4b5563] hover:text-[#111] hover:bg-[#e8e8e6]'
+                    ? 'liquid-glass-btn text-white'
+                    : 'spatial-pill text-[#636366] hover:text-[#0f1115]'
                 }`}
               >
                 {b.label}
@@ -182,7 +182,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Recharts Area with Clean Light Styling */}
+        {/* Recharts Area */}
         <div className="w-full pt-2" style={{ height: 300, minHeight: 300 }}>
           <ResponsiveContainer width="100%" height={300}>
             <AreaChart data={benchmarkHistory}>
@@ -192,17 +192,18 @@ export default function Dashboard() {
                   <stop offset="95%" stopColor="#00b3dd" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0ee" vertical={false} />
-              <XAxis dataKey="date" stroke="#9a9a9a" tick={{ fontSize: 11, fill: '#7b7b7b' }} />
-              <YAxis stroke="#9a9a9a" domain={['auto', 'auto']} tick={{ fontSize: 11, fill: '#7b7b7b' }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.04)" vertical={false} />
+              <XAxis dataKey="date" stroke="#8e8e93" tick={{ fontSize: 11, fill: '#8e8e93' }} />
+              <YAxis stroke="#8e8e93" domain={['auto', 'auto']} tick={{ fontSize: 11, fill: '#8e8e93' }} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#ffffff',
-                  borderColor: '#e8e8e6',
-                  borderRadius: '12px',
-                  color: '#111111',
+                  backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                  backdropFilter: 'blur(16px)',
+                  borderColor: 'rgba(255, 255, 255, 0.8)',
+                  borderRadius: '16px',
+                  color: '#0f1115',
                   fontSize: '12px',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+                  boxShadow: '0 12px 30px rgba(0, 0, 0, 0.12)',
                 }}
               />
               <Area
@@ -222,12 +223,12 @@ export default function Dashboard() {
       {/* 5. Popular Assets Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-medium text-[#111]">
+          <h2 className="text-xl font-semibold text-[#0f1115]">
             Featured Equity Universe
           </h2>
           <button
             onClick={() => navigate('/explore')}
-            className="text-xs font-medium text-[#111] flex items-center gap-1 hover:opacity-70 transition"
+            className="spatial-pill px-3 py-1.5 text-xs font-semibold text-[#0f1115] flex items-center gap-1.5 hover:opacity-80 transition cursor-pointer"
           >
             <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -241,19 +242,19 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* 6. Top Gainers & Decliners Panels (White Cards with Kindred Styling) */}
+      {/* 6. Top Gainers & Decliners Panels */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Gainers */}
-        <div className="p-6 rounded-2xl bg-white border border-[#e8e8e6] shadow-xs space-y-4">
+        <div className="liquid-glass-panel p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <h3 className="text-base font-medium text-[#111]">Session Gainers</h3>
+              <h3 className="text-base font-semibold text-[#0f1115]">Session Gainers</h3>
             </div>
-            <span className="text-[11px] text-[#9a9a9a] uppercase font-medium">Positive Velocity</span>
+            <span className="text-[11px] text-[#8e8e93] uppercase font-semibold">Positive Velocity</span>
           </div>
 
-          <div className="divide-y divide-[#e8e8e6]">
+          <div className="divide-y divide-black/5">
             {overview.top_gainers.map((stock) => (
               <div
                 key={stock.symbol}
@@ -261,14 +262,14 @@ export default function Dashboard() {
                   setSelectedSymbol(stock.symbol);
                   navigate(`/stocks/${encodeURIComponent(stock.symbol)}`);
                 }}
-                className="py-3 flex items-center justify-between hover:bg-[#fafaf8] px-2 rounded-xl transition cursor-pointer"
+                className="py-3 flex items-center justify-between hover:bg-white/60 px-3 rounded-xl transition cursor-pointer"
               >
                 <div>
-                  <div className="font-medium text-sm text-[#111]">{stock.symbol}</div>
-                  <div className="text-xs text-[#9a9a9a] truncate max-w-[180px]">{stock.name}</div>
+                  <div className="font-semibold text-sm text-[#0f1115]">{stock.symbol}</div>
+                  <div className="text-xs text-[#8e8e93] truncate max-w-[180px]">{stock.name}</div>
                 </div>
                 <div className="text-right">
-                  <div className="font-medium text-sm text-[#111]">{formatCurrency(stock.price, stock.currency)}</div>
+                  <div className="font-semibold text-sm text-[#0f1115]">{formatCurrency(stock.price, stock.currency)}</div>
                   <div className="text-xs font-semibold text-emerald-600 flex items-center justify-end gap-0.5">
                     <TrendingUp className="w-3 h-3" />
                     <span>{formatPercent(stock.percent_change)}</span>
@@ -280,16 +281,16 @@ export default function Dashboard() {
         </div>
 
         {/* Top Decliners */}
-        <div className="p-6 rounded-2xl bg-white border border-[#e8e8e6] shadow-xs space-y-4">
+        <div className="liquid-glass-panel p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-rose-500" />
-              <h3 className="text-base font-medium text-[#111]">Session Decliners</h3>
+              <h3 className="text-base font-semibold text-[#0f1115]">Session Decliners</h3>
             </div>
-            <span className="text-[11px] text-[#9a9a9a] uppercase font-medium">Negative Shift</span>
+            <span className="text-[11px] text-[#8e8e93] uppercase font-semibold">Negative Shift</span>
           </div>
 
-          <div className="divide-y divide-[#e8e8e6]">
+          <div className="divide-y divide-black/5">
             {overview.top_losers.map((stock) => (
               <div
                 key={stock.symbol}
@@ -297,14 +298,14 @@ export default function Dashboard() {
                   setSelectedSymbol(stock.symbol);
                   navigate(`/stocks/${encodeURIComponent(stock.symbol)}`);
                 }}
-                className="py-3 flex items-center justify-between hover:bg-[#fafaf8] px-2 rounded-xl transition cursor-pointer"
+                className="py-3 flex items-center justify-between hover:bg-white/60 px-3 rounded-xl transition cursor-pointer"
               >
                 <div>
-                  <div className="font-medium text-sm text-[#111]">{stock.symbol}</div>
-                  <div className="text-xs text-[#9a9a9a] truncate max-w-[180px]">{stock.name}</div>
+                  <div className="font-semibold text-sm text-[#0f1115]">{stock.symbol}</div>
+                  <div className="text-xs text-[#8e8e93] truncate max-w-[180px]">{stock.name}</div>
                 </div>
                 <div className="text-right">
-                  <div className="font-medium text-sm text-[#111]">{formatCurrency(stock.price, stock.currency)}</div>
+                  <div className="font-semibold text-sm text-[#0f1115]">{formatCurrency(stock.price, stock.currency)}</div>
                   <div className="text-xs font-semibold text-rose-600 flex items-center justify-end gap-0.5">
                     <TrendingDown className="w-3 h-3" />
                     <span>{formatPercent(stock.percent_change)}</span>

@@ -90,46 +90,46 @@ export default function StockDetails() {
   const inWatchlist = isInWatchlist(quote.symbol);
 
   return (
-    <div className="p-4 lg:p-8 space-y-8 max-w-6xl mx-auto bg-[#f7f7f5] text-[#7b7b7b] font-sans">
+    <div className="space-y-8 font-sans text-[#636366]">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#e8e8e6]">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black/5">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl sm:text-4xl font-medium text-[#111] tracking-[-0.03em]">
+            <h1 className="text-3xl sm:text-4xl font-semibold text-[#0f1115] tracking-tight">
               {quote.symbol}
             </h1>
-            <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-[#f0f0ee] text-[#4b5563]">
-              {quote.market === 'IN' ? 'NSE/BSE (India)' : 'US Equities'}
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-black/5 text-[#636366] border border-black/5">
+              {quote.market === 'IN' ? 'NSE (India)' : 'US Equities'}
             </span>
           </div>
-          <p className="text-sm text-[#7b7b7b] mt-1">{quote.name}</p>
+          <p className="text-sm text-[#8e8e93] mt-1">{quote.name}</p>
         </div>
 
         {/* Feature Action Buttons */}
         <div className="flex flex-wrap items-center gap-2.5">
           <button
             onClick={() => toggleWatchlist(quote.symbol)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium border transition cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
               inWatchlist
-                ? 'bg-[#111] text-white border-[#111]'
-                : 'bg-white text-[#111] border-[#e8e8e6] hover:bg-[#f0f0ee]'
+                ? 'liquid-glass-btn text-white'
+                : 'spatial-pill text-[#0f1115] hover:bg-white'
             }`}
           >
-            <Bookmark className="w-3.5 h-3.5 fill-current" />
+            <Bookmark className={`w-3.5 h-3.5 ${inWatchlist ? 'fill-current' : ''}`} />
             <span>{inWatchlist ? 'Watchlisted' : 'Add to Watchlist'}</span>
           </button>
 
           <Link
             to={`/technical/${encodeURIComponent(quote.symbol)}`}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-[#f0f0ee] border border-[#e8e8e6] text-xs font-medium text-[#111] transition shadow-xs"
+            className="spatial-pill flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[#0f1115] transition"
           >
-            <Sliders className="w-3.5 h-3.5 text-[#7b7b7b]" />
+            <Sliders className="w-3.5 h-3.5 text-[#8e8e93]" />
             <span>Technicals</span>
           </Link>
 
           <Link
             to={`/predictions/${encodeURIComponent(quote.symbol)}`}
-            className="flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#111] text-white hover:bg-black text-xs font-medium transition shadow-xs"
+            className="liquid-glass-btn flex items-center gap-1.5 px-5 py-2 text-xs font-semibold transition"
           >
             <Cpu className="w-3.5 h-3.5" />
             <span>AI Prediction</span>
@@ -137,7 +137,7 @@ export default function StockDetails() {
 
           <Link
             to={`/insights/${encodeURIComponent(quote.symbol)}`}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-[#f0f0ee] border border-[#e8e8e6] text-xs font-medium text-[#111] transition shadow-xs"
+            className="spatial-pill flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[#0f1115] transition"
           >
             <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
             <span>Insights</span>
@@ -149,75 +149,75 @@ export default function StockDetails() {
 
       {/* Primary Settlement Price Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="rounded-2xl bg-white border border-[#e8e8e6] p-5 col-span-2 sm:col-span-1 lg:col-span-2 flex flex-col justify-between shadow-xs">
-          <div className="text-xs text-[#9a9a9a] uppercase tracking-wider font-medium">Last Settlement Close</div>
+        <div className="liquid-glass-panel p-5 col-span-2 sm:col-span-1 lg:col-span-2 flex flex-col justify-between">
+          <div className="text-xs text-[#8e8e93] uppercase tracking-wider font-semibold">Last Settlement Close</div>
           <div className="flex items-baseline gap-3 my-1">
-            <span className="text-3xl font-semibold text-[#111]">
+            <span className="text-3xl font-semibold text-[#0f1115]">
               {formatCurrency(quote.price, quote.currency)}
             </span>
             <div
               className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
                 isPositive
-                  ? 'text-emerald-700 bg-emerald-50 border border-emerald-200/60'
-                  : 'text-rose-700 bg-rose-50 border border-rose-200/60'
+                  ? 'liquid-accent-pill text-emerald-800'
+                  : 'bg-rose-500/10 text-rose-700 border border-rose-500/20'
               }`}
             >
               {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
               <span>{formatPercent(quote.percent_change)}</span>
             </div>
           </div>
-          <div className="text-xs text-[#9a9a9a]">
+          <div className="text-xs text-[#8e8e93]">
             {isPositive ? '+' : ''}{formatCurrency(quote.change, quote.currency)} Today
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white border border-[#e8e8e6] p-4 flex flex-col justify-between shadow-xs">
-          <span className="text-xs text-[#9a9a9a] uppercase tracking-wider font-medium">Day High</span>
-          <span className="text-lg font-semibold text-[#111]">
+        <div className="liquid-glass-panel p-4 flex flex-col justify-between">
+          <span className="text-xs text-[#8e8e93] uppercase tracking-wider font-semibold">Day High</span>
+          <span className="text-lg font-semibold text-[#0f1115]">
             {formatCurrency(quote.high, quote.currency)}
           </span>
-          <span className="text-[11px] text-[#9a9a9a]">Peak transaction</span>
+          <span className="text-[11px] text-[#8e8e93]">Peak transaction</span>
         </div>
 
-        <div className="rounded-2xl bg-white border border-[#e8e8e6] p-4 flex flex-col justify-between shadow-xs">
-          <span className="text-xs text-[#9a9a9a] uppercase tracking-wider font-medium">Day Low</span>
-          <span className="text-lg font-semibold text-[#111]">
+        <div className="liquid-glass-panel p-4 flex flex-col justify-between">
+          <span className="text-xs text-[#8e8e93] uppercase tracking-wider font-semibold">Day Low</span>
+          <span className="text-lg font-semibold text-[#0f1115]">
             {formatCurrency(quote.low, quote.currency)}
           </span>
-          <span className="text-[11px] text-[#9a9a9a]">Base transaction</span>
+          <span className="text-[11px] text-[#8e8e93]">Base transaction</span>
         </div>
 
-        <div className="rounded-2xl bg-white border border-[#e8e8e6] p-4 flex flex-col justify-between shadow-xs">
-          <span className="text-xs text-[#9a9a9a] uppercase tracking-wider font-medium">Open</span>
-          <span className="text-lg font-semibold text-[#111]">
+        <div className="liquid-glass-panel p-4 flex flex-col justify-between">
+          <span className="text-xs text-[#8e8e93] uppercase tracking-wider font-semibold">Open</span>
+          <span className="text-lg font-semibold text-[#0f1115]">
             {formatCurrency(quote.open, quote.currency)}
           </span>
-          <span className="text-[11px] text-[#9a9a9a]">Market open</span>
+          <span className="text-[11px] text-[#8e8e93]">Market open</span>
         </div>
 
-        <div className="rounded-2xl bg-white border border-[#e8e8e6] p-4 flex flex-col justify-between shadow-xs">
-          <span className="text-xs text-[#9a9a9a] uppercase tracking-wider font-medium">Volume</span>
-          <span className="text-lg font-semibold text-[#111]">
+        <div className="liquid-glass-panel p-4 flex flex-col justify-between">
+          <span className="text-xs text-[#8e8e93] uppercase tracking-wider font-semibold">Volume</span>
+          <span className="text-lg font-semibold text-[#0f1115]">
             {formatVolume(quote.volume)}
           </span>
-          <span className="text-[11px] text-[#9a9a9a]">Contracts traded</span>
+          <span className="text-[11px] text-[#8e8e93]">Contracts traded</span>
         </div>
       </div>
 
       {/* Main Interactive Settlement Chart Card */}
-      <div className="rounded-2xl bg-white border border-[#e8e8e6] p-6 sm:p-8 shadow-xs space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[#e8e8e6]">
+      <div className="liquid-glass-panel p-6 sm:p-8 space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-black/5">
           <div>
-            <h3 className="text-xl font-medium text-[#111]">
+            <h3 className="text-xl font-semibold text-[#0f1115]">
               Continuous Settlement Trajectory
             </h3>
-            <p className="text-xs text-[#7b7b7b] mt-0.5">
+            <p className="text-xs text-[#8e8e93] mt-0.5">
               Historical adjusted daily close values across chosen timeframe
             </p>
           </div>
 
           {/* Timeframe Period Switcher */}
-          <div className="flex items-center gap-1.5 p-1 rounded-full bg-[#f7f7f5] border border-[#e8e8e6]">
+          <div className="spatial-pill flex items-center gap-1.5 p-1">
             {['1mo', '3mo', '6mo', '1y', '5y'].map((p) => (
               <button
                 key={p}

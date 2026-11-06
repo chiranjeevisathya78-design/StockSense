@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { StockProvider, useStock } from './context/StockContext';
 import ErrorBoundary from './components/ErrorBoundary';
+import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
@@ -43,12 +44,14 @@ function Toast() {
 
 function TerminalLayout({ children }) {
   return (
-    <div className="min-h-screen bg-[#f7f7f5] text-[#7b7b7b] flex flex-col font-sans">
-      <Navbar />
-      <main className="flex-1 min-w-0">
-        {children}
+    <div className="min-h-screen bg-[#f5f5f7] text-[#636366] flex flex-col md:flex-row font-sans relative">
+      <Sidebar />
+      <div className="flex-1 flex flex-col min-w-0">
+        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8">
+          {children}
+        </main>
         <Footer />
-      </main>
+      </div>
     </div>
   );
 }

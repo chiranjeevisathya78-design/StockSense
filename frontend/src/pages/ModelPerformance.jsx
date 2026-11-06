@@ -80,24 +80,24 @@ export default function ModelPerformance() {
     : [];
 
   return (
-    <div className="p-4 lg:p-8 space-y-8 max-w-6xl mx-auto bg-[#f7f7f5] text-[#7b7b7b] font-sans">
+    <div className="space-y-8 font-sans text-[#636366]">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#e8e8e6]">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black/5">
         <div>
-          <div className="text-xs uppercase tracking-wider text-[#9a9a9a] font-medium mb-1">
+          <div className="text-xs uppercase tracking-wider text-[#8e8e93] font-medium mb-1">
             Empirical Statistical Verification
           </div>
-          <h1 className="text-3xl sm:text-4xl font-medium text-[#111] tracking-[-0.03em]">
-            Model Performance — {activeSymbol}
+          <h1 className="text-3xl sm:text-4xl font-semibold text-[#0f1115] tracking-tight">
+            Model Performance — <span className="text-emerald-700">{activeSymbol}</span>
           </h1>
-          <p className="text-sm text-[#7b7b7b] mt-1">
+          <p className="text-sm text-[#8e8e93] mt-1">
             Chronological out-of-sample benchmark error comparison across predictive regressors
           </p>
         </div>
 
         <Link
           to={`/predictions/${encodeURIComponent(activeSymbol)}`}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#111] hover:bg-black text-white text-xs font-medium transition shadow-xs"
+          className="liquid-glass-btn flex items-center gap-1.5 px-5 py-2 text-xs font-semibold transition"
         >
           <Cpu className="w-3.5 h-3.5" />
           <span>Active Targets</span>
@@ -106,7 +106,7 @@ export default function ModelPerformance() {
 
       <DisclaimerBanner compact />
 
-      {/* Model Comparison Metrics (Kindred White Cards) */}
+      {/* Model Comparison Metrics (Liquid Glass Panels) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {modelEntries.map((m) => (
           <div

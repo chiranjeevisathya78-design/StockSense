@@ -94,22 +94,22 @@ export default function TechnicalAnalysis() {
   const series = Array.isArray(data.series) ? data.series : [];
 
   return (
-    <div className="p-4 lg:p-8 space-y-8 max-w-6xl mx-auto bg-[#f7f7f5] text-[#7b7b7b] font-sans">
+    <div className="space-y-8 font-sans text-[#636366]">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#e8e8e6]">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black/5">
         <div>
-          <div className="text-xs uppercase tracking-wider text-[#9a9a9a] font-medium mb-1">
+          <div className="text-xs uppercase tracking-wider text-[#8e8e93] font-medium mb-1">
             Mathematical Momentum Envelopes
           </div>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl sm:text-4xl font-medium text-[#111] tracking-[-0.03em]">
+            <h1 className="text-3xl sm:text-4xl font-semibold text-[#0f1115] tracking-tight">
               {activeSymbol} Technicals
             </h1>
             <span
               className={`text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1.5 ${
                 isBullish
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
-                  : 'bg-rose-50 text-rose-700 border border-rose-200/60'
+                  ? 'liquid-accent-pill text-emerald-800'
+                  : 'bg-rose-500/10 text-rose-700 border border-rose-500/20'
               }`}
             >
               {isBullish ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
@@ -122,13 +122,13 @@ export default function TechnicalAnalysis() {
         <div className="flex items-center gap-2">
           <Link
             to={`/stocks/${encodeURIComponent(activeSymbol)}`}
-            className="px-4 py-2 rounded-full bg-white hover:bg-[#f0f0ee] border border-[#e8e8e6] text-xs font-medium text-[#111] transition shadow-xs"
+            className="spatial-pill px-4 py-2 text-xs font-semibold text-[#0f1115] transition"
           >
             Quote Overview
           </Link>
           <Link
             to={`/predictions/${encodeURIComponent(activeSymbol)}`}
-            className="px-4 py-2 rounded-full bg-[#111] hover:bg-black text-white text-xs font-medium transition shadow-xs"
+            className="liquid-glass-btn px-4 py-2 text-xs font-semibold transition"
           >
             AI Price Targets
           </Link>
@@ -137,28 +137,28 @@ export default function TechnicalAnalysis() {
 
       <DisclaimerBanner compact />
 
-      {/* Primary Mathematical Gauge Cards (Kindred White Cards) */}
+      {/* Primary Mathematical Gauge Cards (Liquid Glass Panels) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* RSI */}
-        <div className="rounded-2xl bg-white border border-[#e8e8e6] p-6 shadow-xs space-y-3">
+        <div className="liquid-glass-panel liquid-glass-hover p-6 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs uppercase tracking-wider font-medium text-[#9a9a9a]">Wilder RSI (14)</span>
+            <span className="text-xs uppercase tracking-wider font-semibold text-[#8e8e93]">Wilder RSI (14)</span>
             <span
               className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                 indicators.rsi >= 70
-                  ? 'bg-rose-50 text-rose-700 border border-rose-200/60'
+                  ? 'bg-rose-500/10 text-rose-700 border border-rose-500/20'
                   : indicators.rsi <= 30
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
-                  : 'bg-[#f0f0ee] text-[#4b5563]'
+                  ? 'liquid-accent-pill text-emerald-800'
+                  : 'bg-black/5 text-[#636366]'
               }`}
             >
               {indicators.rsi >= 70 ? 'Overbought' : indicators.rsi <= 30 ? 'Oversold' : 'Neutral'}
             </span>
           </div>
-          <div className="text-3xl font-semibold text-[#111]">
+          <div className="text-3xl font-semibold text-[#0f1115]">
             {indicators.rsi.toFixed(1)}
           </div>
-          <div className="w-full bg-[#f0f0ee] h-2 rounded-full overflow-hidden">
+          <div className="w-full bg-black/5 h-2 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-500 ${
                 indicators.rsi >= 70 ? 'bg-rose-500' : indicators.rsi <= 30 ? 'bg-emerald-500' : 'bg-cyan-500'
@@ -169,62 +169,62 @@ export default function TechnicalAnalysis() {
         </div>
 
         {/* MACD */}
-        <div className="rounded-2xl bg-white border border-[#e8e8e6] p-6 shadow-xs space-y-3">
+        <div className="liquid-glass-panel liquid-glass-hover p-6 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs uppercase tracking-wider font-medium text-[#9a9a9a]">MACD Momentum</span>
+            <span className="text-xs uppercase tracking-wider font-semibold text-[#8e8e93]">MACD Momentum</span>
             <span
               className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                 indicators.macd >= indicators.macd_signal
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
-                  : 'bg-rose-50 text-rose-700 border border-rose-200/60'
+                  ? 'liquid-accent-pill text-emerald-800'
+                  : 'bg-rose-500/10 text-rose-700 border border-rose-500/20'
               }`}
             >
               {indicators.macd >= indicators.macd_signal ? 'Signal Bullish' : 'Signal Bearish'}
             </span>
           </div>
-          <div className="text-3xl font-semibold text-[#111]">
+          <div className="text-3xl font-semibold text-[#0f1115]">
             {indicators.macd.toFixed(2)}
           </div>
-          <div className="text-xs text-[#9a9a9a]">
+          <div className="text-xs text-[#8e8e93]">
             Signal Line: {indicators.macd_signal.toFixed(2)} (Diff: {(indicators.macd - indicators.macd_signal).toFixed(2)})
           </div>
         </div>
 
         {/* Bollinger Band Upper & Lower */}
-        <div className="rounded-2xl bg-white border border-[#e8e8e6] p-6 shadow-xs space-y-3">
+        <div className="liquid-glass-panel liquid-glass-hover p-6 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs uppercase tracking-wider font-medium text-[#9a9a9a]">Bollinger (20, 2)</span>
-            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#f0f0ee] text-[#4b5563]">
+            <span className="text-xs uppercase tracking-wider font-semibold text-[#8e8e93]">Bollinger (20, 2)</span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-black/5 text-[#636366]">
               Volatility Band
             </span>
           </div>
-          <div className="text-xl font-semibold text-[#111]">
-            {indicators.bb_upper.toFixed(1)} <span className="text-xs font-normal text-[#9a9a9a]">Upper</span>
+          <div className="text-xl font-semibold text-[#0f1115]">
+            {indicators.bb_upper.toFixed(1)} <span className="text-xs font-normal text-[#8e8e93]">Upper</span>
           </div>
-          <div className="text-xs text-[#9a9a9a]">
+          <div className="text-xs text-[#8e8e93]">
             Lower Band: {indicators.bb_lower.toFixed(1)}
           </div>
         </div>
 
         {/* SMA Alignment */}
-        <div className="rounded-2xl bg-white border border-[#e8e8e6] p-6 shadow-xs space-y-3">
+        <div className="liquid-glass-panel liquid-glass-hover p-6 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs uppercase tracking-wider font-medium text-[#9a9a9a]">SMA Golden Alignment</span>
-            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+            <span className="text-xs uppercase tracking-wider font-semibold text-[#8e8e93]">SMA Golden Alignment</span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full liquid-accent-pill text-emerald-800">
               Active
             </span>
           </div>
-          <div className="text-xl font-semibold text-[#111]">
+          <div className="text-xl font-semibold text-[#0f1115]">
             20-SMA: {indicators.sma_20.toFixed(1)}
           </div>
-          <div className="text-xs text-[#9a9a9a]">
+          <div className="text-xs text-[#8e8e93]">
             50-SMA: {indicators.sma_50.toFixed(1)}
           </div>
         </div>
       </div>
 
       {/* Main Composed Chart Card */}
-      <div className="rounded-2xl bg-white border border-[#e8e8e6] p-6 sm:p-8 shadow-xs space-y-6">
+      <div className="liquid-glass-panel p-6 sm:p-8 space-y-6">
         <div>
           <h3 className="text-xl font-medium text-[#111]">
             Price vs Technical Envelopes (Bollinger & Moving Averages)
